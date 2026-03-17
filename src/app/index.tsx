@@ -1,32 +1,19 @@
 
-import { Text, TouchableOpacity, View } from "react-native";
-
+import { Redirect, router } from "expo-router";
+import { TouchableOpacity, View ,Text} from "react-native";
+import { navigationRouter } from "../navigation";
 
 
 export default function Index() {
 
-  
-
 
 
   return (
-    <View className="items-center justify-center flex-1 p-4 bg-gray-100">
-      <Text className="text-2xl font-bold text-black">
-        Start PromptHub App Development 
-      </Text>
-      <TouchableOpacity>
-        Click  Me
+    <View style={{flex:1, justifyContent:"center", margin:"auto"}}>
+      <TouchableOpacity onPress={navigationRouter.goRegister}>
+        <Text>Get Started</Text>
       </TouchableOpacity>
-       <TouchableOpacity>
-        Click  Me
-      </TouchableOpacity>
-        <TouchableOpacity>
-        Click  Me
-      </TouchableOpacity> 
-        <TouchableOpacity>
-        Click  Me
-      </TouchableOpacity> 
-      
+
     </View>
-  );
+  )
 } 
