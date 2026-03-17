@@ -44,7 +44,7 @@ export default function ForgotPasswordScreen() {
             Recover Access
           </Text>
           <Text className="text-base text-[#657786] mb-10 leading-6">
-            Enter your email. We'll send you a link to reset your password.
+            Enter your email. We ll send you a link to reset your password.
           </Text>
 
           {/* Form Section */}

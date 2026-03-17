@@ -45,7 +45,7 @@ export default function VerifyOtp() {
             Verify OTP
           </Text>
           <Text className="text-base text-[#657786] mb-10 leading-6">
-            We've sent a 4-digit code to your email. Enter it below to verify your account.
+            We ve sent a 4-digit code to your email. Enter it below to verify your account.
           </Text>
 
           {/* OTP Input Section */}
@@ -70,7 +70,7 @@ export default function VerifyOtp() {
 
           {/* Resend Logic */}
           <View className="flex-row items-center justify-center">
-            <Text className="text-sm text-[#657786]">Didn't receive code? </Text>
+            <Text className="text-sm text-[#657786]">Didn t receive code? </Text>
             <TouchableOpacity>
               <Text className="text-sm font-bold text-[#00AA45]">Resend Code</Text>
             </TouchableOpacity>

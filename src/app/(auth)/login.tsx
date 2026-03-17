@@ -107,7 +107,7 @@ export default function LoginScreen() {
 
           {/* Footer Navigation */}
           <View className="flex-row items-center justify-center mt-auto">
-            <Text className="text-sm text-[#657786]">Don't have an account? </Text>
+            <Text className="text-sm text-[#657786]">Don t have an account? </Text>
             <TouchableOpacity>
               <Text className="text-sm font-bold text-[#00AA45]">Sign up</Text>
             </TouchableOpacity>
