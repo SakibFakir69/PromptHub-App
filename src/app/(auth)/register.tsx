@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
+import RegisterPage from "@/src/components/auth/register-screen";
+import { View,Text } from "react-native";
 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform 
-} from 'react-native';
 
-import RegisterPage from '@/src/components/auth/register-screen';
 
 export default function RegisterScreen() {
-  
+
 
   return (
-    <RegisterPage/>
+  
+    <View> 
+    
+
+
+     <RegisterPage/>
+    </View>
   );
 }

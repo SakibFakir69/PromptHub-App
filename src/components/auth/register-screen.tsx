@@ -1,109 +1,171 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
- 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform 
-} from 'react-native';
-import { Feather, AntDesign } from '@expo/vector-icons';
-
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context"; // Recommended over standard SafeAreaView
+import { Feather, AntDesign } from "@expo/vector-icons";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { IRegisterInput } from "@/src/types/auth/auth.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerUserInputValidation } from "@/src/validation/auth/auth.validation";
+import { navigationRouter } from "@/src/navigation";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const {
+    control,
+    handleSubmit, // Added this
+    formState: { errors },
+  } = useForm<IRegisterInput>({
+    resolver: zodResolver(registerUserInputValidation),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<IRegisterInput> = (data) => {
+    console.log("Form Data:", data);
+  };
+
   return (
-    //  FIX HERE  ( SAFE AREA VIEW )
-    <View className="flex-1 bg-[#FAFAFA]">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    
+    // SafeAreaView ensures content doesn't go under the notch or status bar
+    <SafeAreaView className=" bg-[#FAFAFA] h-full pt-2">
+        <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <ScrollView 
-          contentContainerStyle={{ flexGrow: 1 }} 
-          className="px-6 pt-10 pb-16"
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          className="px-6 pt-4 pb-10" // Adjusted padding
           showsVerticalScrollIndicator={false}
         >
-          
-          <Text className="text-4xl font-extrabold text-[#0F1419] mb-2">
-            Create Account
-          </Text>
-          <Text className="text-base text-[#657786] mb-8 leading-6">
-            Join our community and start your journey today.
-          </Text>
+          <View className="mb-8">
+            <Text className="text-4xl font-extrabold text-[#0F1419] mb-2">
+              Create Account
+            </Text>
+            <Text className="text-base text-[#657786] leading-6">
+              Join our community and start your journey today.
+            </Text>
+          </View>
 
-          {/* Form Section */}
-          <View className="mb-8 space-y-5">
-            {/* Full Name */}
-            <View>
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">Full Name</Text>
-              <TextInput
-                className="h-14 border border-[#E1E8ED] rounded-lg px-4 text-base bg-white text-[#0F1419]"
-                placeholder="John Doe"
-                placeholderTextColor="#A0ABC0"
-              />
-            </View>
-
-            {/* Email */}
-            <View>
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">Email Address</Text>
-              <TextInput
-                className="h-14 border border-[#E1E8ED] rounded-lg px-4 text-base bg-white text-[#0F1419]"
-                placeholder="hello@example.com"
-                placeholderTextColor="#A0ABC0"
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            {/* Password */}
-            <View>
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">Password</Text>
-              <View className="flex-row items-center border border-[#E1E8ED] rounded-lg bg-white">
+          {/* Full Name */}
+          <View className="mb-4">
+            <Text className="text-sm font-bold text-[#0F1419] mb-2">Full Name</Text>
+            <Controller
+              name="fullName"
+              control={control}
+              render={({ field: { onChange, value } }) => (
                 <TextInput
-                  className="flex-1 h-14 px-4 text-base text-[#0F1419]"
-                  placeholder="••••••••"
+                  className={`h-14 border ${errors.fullName ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg px-4 text-base bg-white text-[#0F1419]`}
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder="John Doe"
                   placeholderTextColor="#A0ABC0"
-                  secureTextEntry={!showPassword}
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="pr-4">
-                  <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#657786" />
-                </TouchableOpacity>
-              </View>
-            </View>
+              )}
+            />
+            {errors.fullName && <Text className="mt-1 text-xs text-red-500">{errors.fullName.message}</Text>}
+          </View>
 
-            {/* Confirm Password */}
-            <View>
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">Confirm Password</Text>
-              <View className="flex-row items-center border border-[#E1E8ED] rounded-lg bg-white">
+          {/* Email */}
+          <View className="mb-4">
+            <Text className="text-sm font-bold text-[#0F1419] mb-2">Email Address</Text>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  className="flex-1 h-14 px-4 text-base text-[#0F1419]"
-                  placeholder="••••••••"
+                  className={`h-14 border ${errors.email ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg px-4 text-base bg-white text-[#0F1419]`}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="john@example.com"
                   placeholderTextColor="#A0ABC0"
-                  secureTextEntry={!showConfirmPassword}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} className="pr-4">
-                  <Feather name={showConfirmPassword ? "eye" : "eye-off"} size={20} color="#657786" />
-                </TouchableOpacity>
-              </View>
+              )}
+            />
+            {errors.email && <Text className="mt-1 text-xs text-red-500">{errors.email.message}</Text>}
+          </View>
 
-              {/* gender , profession */}
-            </View>
+          {/* Password */}
+          <View className="mb-4">
+            <Text className="text-sm font-bold text-[#0F1419] mb-2">Password</Text>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View className={`flex-row items-center border ${errors.password ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg bg-white`}>
+                  <TextInput
+                    className="flex-1 h-14 px-4 text-base text-[#0F1419]"
+                    placeholder="••••••••"
+                    placeholderTextColor="#A0ABC0"
+                    secureTextEntry={!showPassword}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="pr-4">
+                    <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#657786" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+            {errors.password && <Text className="mt-1 text-xs text-red-500">{errors.password.message}</Text>}
+          </View>
+
+          {/* Confirm Password */}
+          <View className="mb-6">
+            <Text className="text-sm font-bold text-[#0F1419] mb-2">Confirm Password</Text>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View className={`flex-row items-center border ${errors.confirmPassword ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg bg-white`}>
+                  <TextInput
+                    className="flex-1 h-14 px-4 text-base text-[#0F1419]"
+                    placeholder="••••••••"
+                    placeholderTextColor="#A0ABC0"
+                    secureTextEntry={!showConfirmPassword}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                  <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} className="pr-4">
+                    <Feather name={showConfirmPassword ? "eye" : "eye-off"} size={20} color="#657786" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+            {errors.confirmPassword && <Text className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</Text>}
           </View>
 
           {/* Sign Up Button */}
-          <TouchableOpacity className="bg-[#00AA45] h-14 rounded-lg justify-center items-center mb-6 shadow-md">
+          <TouchableOpacity 
+            onPress={handleSubmit(onSubmit)} 
+            activeOpacity={0.8}
+            className="bg-[#00AA45] h-14 rounded-lg justify-center items-center mb-6 shadow-md"
+          >
             <Text className="text-base font-bold text-white">Sign up</Text>
           </TouchableOpacity>
 
           {/* Footer Link */}
           <View className="flex-row items-center justify-center mb-10">
             <Text className="text-sm text-[#657786]">Already have an account? </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={navigationRouter.goLogin}>
               <Text className="text-sm font-bold text-[#00AA45]">Login</Text>
             </TouchableOpacity>
           </View>
@@ -116,20 +178,23 @@ export default function RegisterPage() {
           </View>
 
           {/* Social Buttons */}
-          <View className="flex-row space-x-3">
+          <View className="flex-row mb-10 space-x-3">
             <TouchableOpacity className="flex-1 flex-row h-14 border border-[#E1E8ED] rounded-lg bg-white justify-center items-center">
               <AntDesign name="google" size={18} color="#DB4437" />
               <Text className="ml-3 text-sm font-semibold text-[#0F1419]">Google</Text>
             </TouchableOpacity>
-            
             <TouchableOpacity className="flex-1 flex-row h-14 border border-[#E1E8ED] rounded-lg bg-white justify-center items-center">
               <AntDesign name="github" size={18} color="#000" />
               <Text className="ml-3 text-sm font-semibold text-[#0F1419]">GitHub</Text>
             </TouchableOpacity>
           </View>
-
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    
+    
+
+
+
+    </SafeAreaView>
   );
 }
