@@ -12,7 +12,9 @@ import {
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function VerifyOtp() {
+  
   const [otp, setOtp] = useState(['', '', '', '']);
+  
 
   return (
     <SafeAreaView className="flex-1 bg-white">

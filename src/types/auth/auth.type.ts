@@ -16,3 +16,7 @@ export interface ILoginInput{
 export interface IForgotPassword {
     email:string
 }
+export interface IResetPassword {
+    newPassword: string,
+    confirmPassword: string
+}
