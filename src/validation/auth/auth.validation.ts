@@ -13,3 +13,13 @@ export const registerUserInputValidation = z.object({
 
 
 })
+
+export const loginUserValidation = z.object({
+    email:z.email().includes("@" , {message:"Must be include @"}),
+      password: z.string().min(4, {message:"Password must be 4 character"}),
+})
+
+export const forgotPasswordValidation = z.object({
+      email:z.email().includes("@" , {message:"Must be include @"}),
+
+})

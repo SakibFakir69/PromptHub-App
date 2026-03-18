@@ -1,3 +1,4 @@
+import { email } from './../../../node_modules/zod/src/v4/core/regexes';
 
 
 export interface IRegisterInput {
@@ -6,4 +7,12 @@ export interface IRegisterInput {
     password:string,
     confirmPassword:string,
     
+}
+
+export interface ILoginInput{
+    email:string,
+    password:string
+}
+export interface IForgotPassword {
+    email:string
 }

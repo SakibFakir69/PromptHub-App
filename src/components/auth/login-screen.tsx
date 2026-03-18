@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { 
   View, 
@@ -11,11 +9,31 @@ import {
   Platform,
   ScrollView 
 } from 'react-native';
-import { Feather, AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { Feather, AntDesign } from '@expo/vector-icons';
 import { navigationRouter } from '@/src/navigation';
+import { loginUserValidation } from '@/src/validation/auth/auth.validation';
+import { ILoginInput } from "@/src/types/auth/auth.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ILoginInput>({
+    resolver: zodResolver(loginUserValidation),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<ILoginInput> = (data) => {
+    console.log("Login Data:", data);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -44,76 +62,107 @@ export default function LoginPage() {
           </Text>
 
           {/* Form Section */}
-          <View className="mb-4 space-y-6">
+          <View className="space-y-4">
+            
             {/* Email Address */}
-            <View>
+            <View className="mb-4">
               <Text className="text-sm font-bold text-[#0F1419] mb-2">Email Address</Text>
-              <View className="flex-row items-center border border-[#E1E8ED] rounded-xl bg-white px-4 h-14">
-                <Feather name="mail" size={20} color="#A0ABC0" />
-                <TextInput
-                  className="flex-1 ml-3 text-base text-[#0F1419]"
-                  placeholder="name@company.com"
-                  placeholderTextColor="#A0ABC0"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View 
+                    className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${
+                      errors.email ? 'border-red-500' : 'border-[#E1E8ED]'
+                    }`}
+                  >
+                    <Feather name="mail" size={20} color={errors.email ? "#EF4444" : "#A0ABC0"} />
+                    <TextInput
+                      className="flex-1 ml-3 text-base text-[#0F1419]"
+                      placeholder="name@company.com"
+                      placeholderTextColor="#A0ABC0"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                  </View>
+                )}
+              />
+              {errors.email && (
+                <Text className="mt-1 ml-1 text-xs text-red-500">{errors.email.message}</Text>
+              )}
             </View>
 
             {/* Password */}
-            <View>
+            <View className="mb-2">
               <Text className="text-sm font-bold text-[#0F1419] mb-2">Password</Text>
-              <View className="flex-row items-center border border-[#E1E8ED] rounded-xl bg-white px-4 h-14">
-                <Feather name="lock" size={20} color="#A0ABC0" />
-                <TextInput
-                  className="flex-1 ml-3 text-base text-[#0F1419]"
-                  placeholder="••••••••"
-                  placeholderTextColor="#A0ABC0"
-                  secureTextEntry={!showPassword}
-                />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#A0ABC0" />
-                </TouchableOpacity>
-              </View>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View 
+                    className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${
+                      errors.password ? 'border-red-500' : 'border-[#E1E8ED]'
+                    }`}
+                  >
+                    <Feather name="lock" size={20} color={errors.password ? "#EF4444" : "#A0ABC0"} />
+                    <TextInput
+                      className="flex-1 ml-3 text-base text-[#0F1419]"
+                      placeholder="••••••••"
+                      placeholderTextColor="#A0ABC0"
+                      secureTextEntry={!showPassword}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                      <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#A0ABC0" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+              {errors.password && (
+                <Text className="mt-1 ml-1 text-xs text-red-500">{errors.password.message}</Text>
+              )}
             </View>
           </View>
 
           {/* Forgot Password Link */}
-          <TouchableOpacity className="items-end mb-10">
+          <TouchableOpacity onPress={navigationRouter.forgotPassword} className="items-end mt-2 mb-10">
             <Text className="text-sm font-bold text-[#00AA45]">Forgot Password?</Text>
           </TouchableOpacity>
 
           {/* Login Button */}
-          <TouchableOpacity className="bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20">
+          <TouchableOpacity 
+            onPress={handleSubmit(onSubmit)}
+            activeOpacity={0.8}
+            className="bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20"
+          >
             <Text className="text-base font-bold text-white">Login</Text>
           </TouchableOpacity>
 
+          {/* Footer Navigation */}
+          <View className="flex-row items-center justify-center">
+            <Text className="text-sm text-[#657786]">Don t have an account? </Text>
+            <TouchableOpacity onPress={navigationRouter.goRegister}>
+              <Text className="text-sm font-bold text-[#00AA45]">Sign up</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Social Divider */}
-          <View className="flex-row items-center mb-8">
-            <View className="flex-1 h-[1px] bg-[#E1E8ED]" />
+          <View className="flex-row items-center mt-8 mb-8">
+            <TouchableOpacity className="flex-1 h-[1px] bg-[#E1E8ED]" />
             <Text className="mx-4 text-xs font-medium text-[#657786]">Or continue with</Text>
-            <View className="flex-1 h-[1px] bg-[#E1E8ED]" />
+            <TouchableOpacity className="flex-1 h-[1px] bg-[#E1E8ED]" />
           </View>
 
           {/* Social Buttons Row */}
-          <View className="flex-row mb-10 space-x-4">
+          <View className="flex-row mb-10">
             <TouchableOpacity className="flex-1 flex-row h-14 border border-[#E1E8ED] rounded-xl justify-center items-center bg-white">
               <AntDesign name="google" size={18} color="#DB4437" />
               <Text className="ml-3 text-sm font-bold text-[#0F1419]">Google</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity className="flex-1 flex-row h-14 border border-[#E1E8ED] rounded-xl justify-center items-center bg-white">
-              <AntDesign name="github" size={18} color="#0F1419" />
-              <Text className="ml-3 text-sm font-bold text-[#0F1419]">GitHub</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Footer Navigation */}
-          <View className="flex-row items-center justify-center mt-auto">
-            <Text className="text-sm text-[#657786]">Don t have an account? </Text>
-            
-            <TouchableOpacity onPress={navigationRouter.goRegister}>
-              <Text className="text-sm font-bold text-[#00AA45]">Sign up</Text>
             </TouchableOpacity>
           </View>
 

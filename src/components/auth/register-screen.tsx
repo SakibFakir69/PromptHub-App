@@ -183,10 +183,7 @@ export default function RegisterPage() {
               <AntDesign name="google" size={18} color="#DB4437" />
               <Text className="ml-3 text-sm font-semibold text-[#0F1419]">Google</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 flex-row h-14 border border-[#E1E8ED] rounded-lg bg-white justify-center items-center">
-              <AntDesign name="github" size={18} color="#000" />
-              <Text className="ml-3 text-sm font-semibold text-[#0F1419]">GitHub</Text>
-            </TouchableOpacity>
+           
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
