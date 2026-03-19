@@ -1,5 +1,4 @@
 import { baseApi } from "../../baseApi";
-
 export const authAPi = baseApi.injectEndpoints({
 
 
@@ -54,6 +53,4 @@ export const authAPi = baseApi.injectEndpoints({
 
     })
 })
-
-
 export const {useLoginMutation, useRegisterMutation, useGetMeQuery, useForgotPasswordMutation,useResetPasswordMutation} = authAPi

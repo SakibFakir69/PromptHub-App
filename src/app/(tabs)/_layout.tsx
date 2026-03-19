@@ -3,12 +3,12 @@ import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { View } from "react-native";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        
         headerShown: false,
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "gray",
@@ -43,12 +43,37 @@ export default function TabLayout() {
       {/* Create Prompt */}
       <Tabs.Screen
         name="create-prompt"
-
         options={{
-          
-          title: "Create",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add-circle-outline" size={size + 4} color={color} />
+          title: "",
+          tabBarLabel: () => null,
+
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 4,
+                justifyContent: "center",
+                alignItems: "center",
+               
+              }}
+            >
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 30,
+                  backgroundColor: focused ? "#007AFF" : "#1DA1F2",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  shadowColor: "#000",
+                  shadowOpacity: 0.2,
+                  shadowRadius: 5,
+                  elevation: 5,
+                }}
+              >
+                <Ionicons name="add" size={30} color="white" />
+              </View>
+            </View>
           ),
         }}
       />
