@@ -4,7 +4,7 @@ export const userAPi = baseApi.injectEndpoints({
 
     endpoints:(builder)=>({
 
-        register:builder.mutation({
+        registerUser:builder.mutation({
             query:(data)=>({
                 url:"/user/create-user",
                 method:"POST",
@@ -13,14 +13,7 @@ export const userAPi = baseApi.injectEndpoints({
 
         }),
 
-        login:builder.mutation({
-            query:(data)=>({
-                url:'/auth/login',
-                method:"POST",
-                body:data
-            })
-
-        }),
+      
         deleteUser:builder.mutation({
             query:()=>({
                 url:'/user/delete-user',
@@ -35,17 +28,10 @@ export const userAPi = baseApi.injectEndpoints({
             })
         }),
 
-        //// 
-        getMe:builder.query({
-            query:()=> ({
-                url:"/auth/me",
-                method:"GET",
-                
-            })
-        }),
+       
 
        
 
     })
 })
-export const {useLoginMutation, useRegisterMutation, useGetMeQuery} = userAPi;
+export const {useRegisterUserMutation, useDeleteUserMutation,useUpdateUserMutation} = userAPi;
