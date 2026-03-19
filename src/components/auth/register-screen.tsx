@@ -8,13 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context"; // Recommended over standard SafeAreaView
+import { SafeAreaView } from "react-native-safe-area-context"; 
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { IRegisterInput } from "@/src/types/auth/auth.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerUserInputValidation } from "@/src/validation/auth/auth.validation";
 import { navigationRouter } from "@/src/navigation";
+import Toast from 'react-native-toast-message';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,13 +36,34 @@ export default function RegisterPage() {
   });
 
   const onSubmit: SubmitHandler<IRegisterInput> = (data) => {
-    console.log("Form Data:", data);
+
+    try {
+
+      
+      
+    } catch (error) {
+      
+      console.log(error);
+      
+      Toast.show({
+        type:"error",
+        text1:"Failed to Register",
+        text2:"Please try again"
+      })
+      
+    }
+
+    
+    
+
+    
   };
 
   return (
     
     // SafeAreaView ensures content doesn't go under the notch or status bar
     <SafeAreaView className=" bg-[#FAFAFA] h-full pt-2">
+      <Toast/>
         <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
