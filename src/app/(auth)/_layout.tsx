@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Slot, usePathname } from 'expo-router';
 // ADD - LINTER, FORMATTER
+// HANDEL - SUBMIT TIME, LOADING , DISIABLE BUTTON 
 
 
 export default function AuthLayout() {

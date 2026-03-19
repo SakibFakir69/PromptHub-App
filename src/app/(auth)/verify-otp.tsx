@@ -9,11 +9,29 @@ import {
   Platform,
   ScrollView 
 } from 'react-native';
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { verifyOtpValidation } from "@/src/validation/auth/auth.validation";
+import { IVerfiyOTP } from "@/src/types/auth/auth.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function VerifyOtp() {
   
   const [otp, setOtp] = useState(['', '', '', '']);
+  const {
+      control,
+      handleSubmit,
+      formState: { errors, isSubmitting },
+    } = useForm<IVerfiyOTP>({
+      
+      resolver: zodResolver(verifyOtpValidation),
+      
+    });
+  
+    const onSubmit: SubmitHandler<IVerfiyOTP> = (data:IVerfiyOTP) => {
+      console.log("Reset Password Data:", data);
+      // Add your API call here
+    };
   
 
   return (

@@ -35,3 +35,7 @@ export const resetPasswordValidation = z.object({
         "Password must be under 30 character"
     }),
 })
+
+export const verifyOtpValidation = z.object({
+    otp:z.string().min(4, {message:"Must be 4 digit"}) || z.number().max(4, {message:"Must be 4 digit"})
+})
