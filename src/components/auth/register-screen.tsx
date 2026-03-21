@@ -16,30 +16,51 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerUserInputValidation } from "@/src/validation/auth/auth.validation";
 import { navigationRouter } from "@/src/navigation";
 import Toast from 'react-native-toast-message';
+import { useRegisterUserMutation } from "@/src/store/features/user/user.features";
+import { router } from "expo-router";
+import { toastConfig } from "@/src/utils/toast.util";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [registerUser, {isLoading} ] = useRegisterUserMutation();
+  
+
   const {
     control,
-    handleSubmit, // Added this
+    handleSubmit, 
     formState: { errors },
   } = useForm<IRegisterInput>({
     resolver: zodResolver(registerUserInputValidation),
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  const onSubmit: SubmitHandler<IRegisterInput> = (data) => {
+  const onSubmit: SubmitHandler<IRegisterInput> =async (data) => {
+    console.log(data , "register")
 
     try {
-
+      console.log("try")
+      console.log("BASE URL:", process.env.EXPO_PUBLIC_BACKEND_URL);
+      const result = await registerUser(data).unwrap();
       
+      console.log("result")
+      console.log(result , ' result')
+      
+     
+      // WAIT 1S OR 2S
+      
+     
+      setTimeout(()=>{
+         router.push('/login');
+        
+      },1500)
+
       
     } catch (error) {
       
@@ -51,19 +72,16 @@ export default function RegisterPage() {
         text2:"Please try again"
       })
       
-    }
-
-    
-    
-
-    
+    }    
   };
 
   return (
     
-    // SafeAreaView ensures content doesn't go under the notch or status bar
+  
     <SafeAreaView className=" bg-[#FAFAFA] h-full pt-2">
-      <Toast/>
+      
+    
+      
         <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -86,11 +104,11 @@ export default function RegisterPage() {
           <View className="mb-4">
             <Text className="text-sm font-bold text-[#0F1419] mb-2">Full Name</Text>
             <Controller
-              name="fullName"
+              name="name"
               control={control}
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  className={`h-14 border ${errors.fullName ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg px-4 text-base bg-white text-[#0F1419]`}
+                  className={`h-14 border ${errors.name ? 'border-red-500' : 'border-[#E1E8ED]'} rounded-lg px-4 text-base bg-white text-[#0F1419]`}
                   value={value}
                   onChangeText={onChange}
                   placeholder="John Doe"
@@ -98,7 +116,7 @@ export default function RegisterPage() {
                 />
               )}
             />
-            {errors.fullName && <Text className="mt-1 text-xs text-red-500">{errors.fullName.message}</Text>}
+            {errors.name && <Text className="mt-1 text-xs text-red-500">{errors.name.message}</Text>}
           </View>
 
           {/* Email */}
@@ -181,7 +199,7 @@ export default function RegisterPage() {
             activeOpacity={0.8}
             className="bg-[#00AA45] h-14 rounded-lg justify-center items-center mb-6 shadow-md"
           >
-            <Text className="text-base font-bold text-white">Sign up</Text>
+            <Text className="text-base font-bold text-white">{isLoading ? "Loading.." : " Sign up "} </Text>
           </TouchableOpacity>
 
           {/* Footer Link */}

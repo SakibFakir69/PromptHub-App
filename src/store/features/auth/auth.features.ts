@@ -1,6 +1,7 @@
 import { baseApi } from "../../baseApi";
 
 export const authApi = baseApi.injectEndpoints({
+    
   endpoints: (builder) => ({
     getMe: builder.query({
       query: () => ({
@@ -11,7 +12,7 @@ export const authApi = baseApi.injectEndpoints({
 
     loginUser: builder.mutation({
       query: (data) => ({
-        url: "/auth/login",
+        url: "/auth/login-user",
         method: "POST",
         body: data,
       }),
@@ -24,6 +25,7 @@ export const authApi = baseApi.injectEndpoints({
 
         })
     }),
+
     resetPassword:builder.mutation({
         query:(data)=>({
             url:'/auth/reset-password',
