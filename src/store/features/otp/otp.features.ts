@@ -20,10 +20,17 @@ export const otpApi = baseApi.injectEndpoints({
                 method:"POST",
                 body:data
             })
+        }),
+        isVerifyUser:builder.mutation({
+            query:()=>({
+                url:'/otp/user-verify',
+                method:"POST",
+
+            })
         })
 
 
     })
 })
 
-export const { useVerifyOtpMutation , useSendOtpMutation} = otpApi;
+export const { useVerifyOtpMutation , useSendOtpMutation , useIsVerifyUserMutation} = otpApi;

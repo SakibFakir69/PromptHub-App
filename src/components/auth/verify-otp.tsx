@@ -70,7 +70,6 @@ export default function VerifyOtpPage() {
               OTP Verification
             </Text>
           </View>
-
           {/* Icon Badge */}
           <View className="items-start mb-10">
             <View className="bg-[#E6F6EC] p-4 rounded-2xl">

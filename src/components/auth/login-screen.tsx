@@ -23,7 +23,7 @@ import { router } from "expo-router";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginUser, { isLoading }] = useLoginUserMutation();
-  const [ message , setMessage ] = useState<string>("")
+  const [message, setMessage] = useState<string>("");
 
   const [sendOtp] = useSendOtpMutation();
 
@@ -52,11 +52,17 @@ export default function LoginPage() {
       await SecureStore.setItemAsync("accessToken", result.accessToken);
       await SecureStore.setItemAsync("refreshToken", result.refreshToken);
 
-      const sendOtpResult = await sendOtp(userEmail?.current).unwrap();
-      router.replace('/verify-otp');
+      //// if not isVerifyTrue go otp section
+      // else go feed
 
-      console.log(sendOtpResult, "otp");
-      setMessage(sendOtpResult?.data.message);
+      if (result?.data?.data?.isVerify) {
+        router.replace('/explore');
+      } else {
+        const sendOtpResult = await sendOtp(userEmail?.current).unwrap();
+        console.log(sendOtpResult, "otp");
+        setMessage(sendOtpResult?.data.message);
+        router.replace("/verify-otp");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +79,6 @@ export default function LoginPage() {
           className="px-6 pt-12 pb-10"
           showsVerticalScrollIndicator={false}
         >
-        
           {/* Logo Section */}
           <View className="items-start mb-10">
             <View className="bg-[#E6F6EC] p-3 rounded-2xl">
@@ -91,9 +96,8 @@ export default function LoginPage() {
 
           {/* Form Section */}
           <View className="space-y-4">
-            
-            <Text className="mb-4 -mt-4">{message && message }</Text>
-            
+            <Text className="mb-4 -mt-4">{message && message}</Text>
+
             {/* Email Address */}
             <View className="mb-4">
               <Text className="text-sm font-bold text-[#0F1419] mb-2">
