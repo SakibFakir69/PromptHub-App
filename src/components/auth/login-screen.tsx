@@ -45,18 +45,17 @@ export default function LoginPage() {
     userEmail.current = data?.email;
 
     try {
+      console.log("login user data");
       const result = await loginUser(data).unwrap();
       console.log(result, " login data");
       console.log(userEmail?.current);
-
       await SecureStore.setItemAsync("accessToken", result.accessToken);
       await SecureStore.setItemAsync("refreshToken", result.refreshToken);
-
       //// if not isVerifyTrue go otp section
       // else go feed
-
-      if (result?.data?.data?.isVerify) {
-        router.replace('/explore');
+      console.log(result);
+      if (result?.data?.isVerify) {
+        router.replace("/explore");
       } else {
         const sendOtpResult = await sendOtp(userEmail?.current).unwrap();
         console.log(sendOtpResult, "otp");

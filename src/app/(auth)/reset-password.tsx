@@ -35,6 +35,9 @@ export default function ResetPasswordScreen() {
   const onSubmit: SubmitHandler<IResetPassword> = (data) => {
     console.log("Reset Password Data:", data);
     // Add your API call here
+    
+
+    
   };
 
   return (

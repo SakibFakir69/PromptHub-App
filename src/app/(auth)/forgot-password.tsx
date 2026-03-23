@@ -32,6 +32,8 @@ export default function ForgotPasswordScreen() {
   const onSubmit: SubmitHandler<IForgotPassword> = (data) => {
     console.log("Forgot Password Data:", data);
     // Logic to send reset code here
+    
+    
   };
 
   return (
