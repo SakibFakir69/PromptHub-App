@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordValidation } from "@/src/validation/auth/auth.validation";
 import { IResetPassword } from "@/src/types/auth/auth.type";
 import { navigationRouter } from '@/src/navigation';
+import { useResetPasswordMutation } from '@/src/store/features/auth/auth.features';
 
 export default function ResetPasswordScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,10 +32,26 @@ export default function ResetPasswordScreen() {
       confirmPassword: "",
     },
   });
+  const [resetPassword , {isLoading}] = useResetPasswordMutation();
 
-  const onSubmit: SubmitHandler<IResetPassword> = (data) => {
+  // new password , confirm , email
+
+  const onSubmit: SubmitHandler<IResetPassword> =async (data) => {
     console.log("Reset Password Data:", data);
     // Add your API call here
+
+    try {
+      const result = await resetPassword(data).unwrap();
+
+      console.log(result,
+        'reset password'
+      )
+      
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
     
 
     

@@ -1,66 +1,37 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Platform,
   ActivityIndicator,
-} from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
-import { verifyOtpValidation } from "@/src/validation/auth/auth.validation";
-import { IVerfiyOTP } from "@/src/types/auth/auth.type";
-import { useIsVerifyUserMutation, useResendOtpMutation, useVerifyOtpMutation } from "@/src/store/features/otp/otp.features";
-import { navigationRouter } from "@/src/navigation";
+  Alert,
+} from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useResetOtpMutation } from '@/src/store/features/auth/auth.features';
+import { useResendOtpMutation } from '@/src/store/features/otp/otp.features';
 
-
-// OTP MESSAGE SHOW AFTER SUCCESSFULLY OTP SEND
-//// REMOVE AFTER 3 OR 5 S 
-//// 
-
-export default function VerifyOtpPage() {
+export default function ResetVerifyOtpPage() {
+  const [otpValue, setOtpValue] = useState(['', '', '', '']);
+  const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
   
-  const [ otpMessage , setOtpMessage ] = useState("");
-  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
-  const [isVerifyUser] = useIsVerifyUserMutation();
-  const [ resendOtp] = useResendOtpMutation();
-
+  const [resetCode, { isLoading }] = useResetOtpMutation();
+  const [resendOtp] = useResendOtpMutation();
+  
+  const {email} = useLocalSearchParams();
+  console.log(email)
   
   
-  // Refs for auto-focusing next input
-  const inputRefs = [
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-  ];
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<IVerfiyOTP>({
-    resolver: zodResolver(verifyOtpValidation),
-    defaultValues: { otp: "" },
-  });
-
-  // Watch the OTP value to sync with individual boxes
-  const otpValue = watch("otp") || "";
 
   const handleOtpChange = (text: string, index: number) => {
-    const newOtpArray = otpValue.split("");
-    newOtpArray[index] = text;
-    const combinedOtp = newOtpArray.join("");
-    
-    setValue("otp", combinedOtp);
+    const newOtp = [...otpValue];
+    newOtp[index] = text;
+    setOtpValue(newOtp);
 
     // Auto-focus next input
     if (text && index < 3) {
@@ -70,27 +41,43 @@ export default function VerifyOtpPage() {
 
   const handleKeyPress = (e: any, index: number) => {
     // Move to previous input on backspace if current is empty
-    if (e.nativeEvent.key === "Backspace" && !otpValue[index] && index > 0) {
+    if (e.nativeEvent.key === 'Backspace' && !otpValue[index] && index > 0) {
       inputRefs[index - 1].current?.focus();
     }
   };
 
-  const onSubmit = async (data: IVerfiyOTP) => {
+  const onSubmit = async () => {
+    const otpString = otpValue.join('');
+    if (otpString.length < 4) {
+      Alert.alert("Error", "Please enter the full 4-digit code.");
+      return;
+    }
+
     try {
-      await verifyOtp(data).unwrap();
-      await isVerifyUser(null).unwrap();
-      router.replace("/explore");
-    } catch (error) {
-      console.error("OTP Verification Failed:", error);
+      console.log({otp: otpString, email:email})
+      const result = await resetCode({ otp: otpString, email:email }).unwrap();
+      
+      if (result.status) {
+       
+        router.push('/(auth)/reset-password'
+          
+        );
+        
+      }
+    } catch (error: any) {
+      Alert.alert("Verification Failed", error?.data?.message || "Invalid OTP code.");
+      console.log(error);
     }
   };
+  
 
   const handelResendOtp =async ()=>{
     try {
-      
+      //// AIKANA EMAIL USE KORTA HOBBA 
+      // NEW KORA AKTA API CREATE KORTA HOBBA 
       const result = await resendOtp(null).unwrap();
       console.log(result);
-      setOtpMessage(result?.message);
+    
     } catch (error) {
       console.log(error);
       
@@ -130,8 +117,8 @@ export default function VerifyOtpPage() {
           </Text>
 
           {/* OTP Input Logic */}
-          <View className="flex-row justify-between mb-4">
-            {[0, 1, 2, 3].map((index) => (
+          <View className="flex-row justify-between mb-8">
+            {otpValue.map((digit, index) => (
               <View
                 key={index}
                 className={`w-[70px] h-[75px] border-2 rounded-2xl bg-white items-center justify-center ${
@@ -143,7 +130,7 @@ export default function VerifyOtpPage() {
                   className="text-3xl font-bold text-[#0F1419] text-center w-full h-full"
                   keyboardType="number-pad"
                   maxLength={1}
-                  value={otpValue[index] || ""}
+                  value={digit}
                   onChangeText={(text) => handleOtpChange(text, index)}
                   onKeyPress={(e) => handleKeyPress(e, index)}
                   placeholder="0"
@@ -153,14 +140,10 @@ export default function VerifyOtpPage() {
               </View>
             ))}
           </View>
-          
-          {errors.otp && (
-            <Text className="mb-6 text-sm text-center text-red-500">{errors.otp.message}</Text>
-          )}
 
           {/* Action Button */}
           <TouchableOpacity
-            onPress={handleSubmit(onSubmit)}
+            onPress={onSubmit}
             disabled={isLoading}
             className={`h-14 rounded-xl justify-center items-center mt-6 shadow-lg ${
               isLoading ? "bg-[#00AA45]/70" : "bg-[#00AA45] shadow-[#00AA45]/20"
@@ -183,7 +166,7 @@ export default function VerifyOtpPage() {
 
           <TouchableOpacity 
             className="flex-row items-center justify-center mt-6" 
-            onPress={() => navigationRouter.goLogin()}
+            onPress={() => router.replace('/(auth)/login')}
           >
             <Text className="text-sm text-[#657786]">Back to </Text>
             <Text className="text-sm font-bold text-[#00AA45]">Login</Text>

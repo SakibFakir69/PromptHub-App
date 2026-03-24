@@ -46,6 +46,25 @@ export const authApi = baseApi.injectEndpoints({
             method:"POST"
         })
     }),
+
+    resetEmail:builder.mutation({
+        query:(data)=>({
+            url:'/auth/reset-email',
+            method:"POST",
+            body:data
+        })
+    })
+
+    ,
+    resetOtp:builder.mutation({
+        query:(data)=>({
+            url:'/auth/reset-code',
+            method:"POST",
+            body:data
+
+
+        })
+    }),
     googleLoginUser:builder.mutation({
         query:()=>({
             url:'/auth/google',
@@ -65,4 +84,7 @@ export const authApi = baseApi.injectEndpoints({
   }),
 });
 
-export const {useChangePasswordUserMutation,useGetMeQuery,useGoogleLoginUserCallBackMutation,useGoogleLoginUserMutation,useLogoutUserMutation , useRefreshTokenMutation , useResetPasswordMutation,useLoginUserMutation,} = authApi;
+export const {useChangePasswordUserMutation,useGetMeQuery,useGoogleLoginUserCallBackMutation,useGoogleLoginUserMutation,useLogoutUserMutation , useRefreshTokenMutation , useResetPasswordMutation,useLoginUserMutation,useResetEmailMutation ,useResetOtpMutation } = authApi;
+
+
+//// isVerify use put or patch not post

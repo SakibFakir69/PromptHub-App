@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -15,8 +15,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { navigationRouter } from "@/src/navigation";
 import { forgotPasswordValidation } from "@/src/validation/auth/auth.validation";
 import { IForgotPassword } from "@/src/types/auth/auth.type";
+import { useResetEmailMutation } from "@/src/store/features/auth/auth.features";
+import Toast from "react-native-toast-message";
+import { router } from "expo-router";
+import { email } from "zod";
 
 export default function ForgotPasswordScreen() {
+  const [resetEmail] = useResetEmailMutation();
+  const [ email ,setEmail ] = useState("");
 
   const {
     control,
@@ -29,9 +35,38 @@ export default function ForgotPasswordScreen() {
     },
   });
 
-  const onSubmit: SubmitHandler<IForgotPassword> = (data) => {
+  const onSubmit: SubmitHandler<IForgotPassword> =async (data) => {
+   
     console.log("Forgot Password Data:", data);
-    // Logic to send reset code here
+    
+
+    try {
+      const result = await  resetEmail(data).unwrap();
+      console.log(result);
+      Toast.show({
+        text1:"Send otp to your email"
+      });
+
+      if(result?.status)
+      {
+        /// take email
+        
+        router.push({
+          pathname:'/reset-verify-otp',
+          params:{
+            email:data?.email
+          }
+        })
+        
+      }else{
+        console.log(result , ' forgot password')
+      }
+      
+    } catch (error) {
+      console.log(error)
+      
+    }
+    
     
     
   };
@@ -60,13 +95,13 @@ export default function ForgotPasswordScreen() {
 
           {/* Icon Badge */}
           <View className="items-start mb-10">
-            <div className="bg-[#E6F6EC] p-4 rounded-2xl">
+            <View className="bg-[#E6F6EC] p-4 rounded-2xl">
               <MaterialCommunityIcons
                 name="lock-reset"
                 size={32}
                 color="#00AA45"
               />
-            </div>
+            </View>
           </View>
 
           {/* Header Section */}

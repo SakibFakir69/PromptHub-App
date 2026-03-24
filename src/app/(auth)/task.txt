@@ -1,0 +1,10 @@
+
+
+1. RESEND API FOR FORGOT OPTION 
+2. ADD MESSAGE 
+3. reset password (new password , confirm , email )
+
+
+
+# FIX SEND AND RECIVE OTP CODE
+# RE SEND OTP SHOW MESSAGE
