@@ -18,71 +18,70 @@ import { useResendOtpMutation } from '@/src/store/features/otp/otp.features';
 
 export default function ResetVerifyOtpPage() {
   const [otpValue, setOtpValue] = useState(['', '', '', '']);
-  const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
   
+  // FIX 1: Use a single ref to hold an array of elements
+  const inputRefs = useRef<Array<TextInput | null>>([]);
+
   const [resetCode, { isLoading }] = useResetOtpMutation();
   const [resendOtp] = useResendOtpMutation();
   
-  const {email} = useLocalSearchParams();
-  console.log(email)
+  // FIX 2: Type-safe params extraction
+  const { email } = useLocalSearchParams<{ email: string }>();
   
-  
-
   const handleOtpChange = (text: string, index: number) => {
     const newOtp = [...otpValue];
     newOtp[index] = text;
     setOtpValue(newOtp);
 
-    // Auto-focus next input
+    // FIX 3: Updated focusing logic for the new Ref structure
     if (text && index < 3) {
-      inputRefs[index + 1].current?.focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = (e: any, index: number) => {
-    // Move to previous input on backspace if current is empty
+    // FIX 4: Updated focusing logic for backspace
     if (e.nativeEvent.key === 'Backspace' && !otpValue[index] && index > 0) {
-      inputRefs[index - 1].current?.focus();
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
   const onSubmit = async () => {
+    console.log("Submit pressed"); // This will now show up!
     const otpString = otpValue.join('');
+    
     if (otpString.length < 4) {
       Alert.alert("Error", "Please enter the full 4-digit code.");
       return;
     }
 
     try {
-      console.log({otp: otpString, email:email})
-      const result = await resetCode({ otp: otpString, email:email }).unwrap();
+      console.log("Payload:", { otp: otpString, email: email });
+      const result = await resetCode({ otp: otpString, email: email }).unwrap();
+      console.log("API Result:", result);
       
       if (result.status) {
-       
-        router.push('/(auth)/reset-password'
-          
-        );
-        
+        router.push({ 
+          pathname: '/reset-password',
+          params: { email: email }
+        });
       }
     } catch (error: any) {
       Alert.alert("Verification Failed", error?.data?.message || "Invalid OTP code.");
-      console.log(error);
+      console.log("Catch Error:", error);
     }
   };
-  
 
-  const handelResendOtp =async ()=>{
+  const handelResendOtp = async () => {
     try {
-      //// AIKANA EMAIL USE KORTA HOBBA 
-      // NEW KORA AKTA API CREATE KORTA HOBBA 
-      const result = await resendOtp(null).unwrap();
-      console.log(result);
-    
-    } catch (error) {
-      console.log(error);
       
+      const result = await resendOtp({ email }).unwrap();
+      console.log("Resend Success:", result);
+      Alert.alert("Success", "OTP has been resent to your email.");
+    } catch (error) {
+      console.log("Resend Error:", error);
     }
-  }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -113,7 +112,7 @@ export default function ResetVerifyOtpPage() {
 
           <Text className="text-3xl font-extrabold text-[#0F1419] mb-2">Verify OTP</Text>
           <Text className="text-base text-[#657786] mb-10">
-            We ve sent a 4-digit code to your email.
+            We've sent a 4-digit code to {email || "your email"}.
           </Text>
 
           {/* OTP Input Logic */}
@@ -126,7 +125,8 @@ export default function ResetVerifyOtpPage() {
                 }`}
               >
                 <TextInput
-                  ref={inputRefs[index]}
+                  // FIX 5: Callback ref to assign the element to the array
+                  ref={(el) => (inputRefs.current[index] = el)}
                   className="text-3xl font-bold text-[#0F1419] text-center w-full h-full"
                   keyboardType="number-pad"
                   maxLength={1}
@@ -158,7 +158,7 @@ export default function ResetVerifyOtpPage() {
 
           {/* Footer */}
           <View className="flex-row items-center justify-center mt-10">
-            <Text className="text-sm text-[#657786]">Didn t receive code? </Text>
+            <Text className="text-sm text-[#657786]">Didn't receive code? </Text>
             <TouchableOpacity onPress={handelResendOtp}>
               <Text className="text-sm font-bold text-[#00AA45]">Resend Code</Text>
             </TouchableOpacity>

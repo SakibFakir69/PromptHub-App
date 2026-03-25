@@ -3,7 +3,8 @@
 1. RESEND API FOR FORGOT OPTION 
 2. ADD MESSAGE 
 3. reset password (new password , confirm , email )
-
+4. ADD LOADING SCREEN
+5. HEIGHT AND WIDTH
 
 
 # FIX SEND AND RECIVE OTP CODE

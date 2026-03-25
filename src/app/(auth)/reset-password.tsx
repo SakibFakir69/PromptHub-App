@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  KeyboardAvoidingView, 
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  KeyboardAvoidingView,
   Platform,
-  ScrollView 
-} from 'react-native';
-import { Feather, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+  ScrollView,
+} from "react-native";
+import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordValidation } from "@/src/validation/auth/auth.validation";
 import { IResetPassword } from "@/src/types/auth/auth.type";
-import { navigationRouter } from '@/src/navigation';
-import { useResetPasswordMutation } from '@/src/store/features/auth/auth.features';
+import { navigationRouter } from "@/src/navigation";
+import { useResetPasswordMutation } from "@/src/store/features/auth/auth.features";
+import { router, useLocalSearchParams } from "expo-router";
 
 export default function ResetPasswordScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,39 +33,41 @@ export default function ResetPasswordScreen() {
       confirmPassword: "",
     },
   });
-  const [resetPassword , {isLoading}] = useResetPasswordMutation();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const { email } = useLocalSearchParams();
 
   // new password , confirm , email
 
-  const onSubmit: SubmitHandler<IResetPassword> =async (data) => {
+  const onSubmit: SubmitHandler<IResetPassword> = async (data) => {
     console.log("Reset Password Data:", data);
     // Add your API call here
 
     try {
-      const result = await resetPassword(data).unwrap();
+      const payload = {
+        newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
+        email: email,
+      };
+      console.log(payload , ' payload');
+      
+      const result = await resetPassword(payload).unwrap();
+      console.log(result , ' reset')
+      router.replace('/explore');
 
-      console.log(result,
-        'reset password'
-      )
-      
-      
+      console.log(result, "reset password");
     } catch (error) {
       console.log(error);
-      
     }
-    
-
-    
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
-        <ScrollView 
-          contentContainerStyle={{ flexGrow: 1 }} 
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
           className="px-6 pt-6 pb-10"
           showsVerticalScrollIndicator={false}
         >
@@ -73,7 +76,9 @@ export default function ResetPasswordScreen() {
             <TouchableOpacity onPress={navigationRouter.goLogin}>
               <Feather name="arrow-left" size={24} color="#000" />
             </TouchableOpacity>
-            <Text className="flex-1 text-center mr-6 text-lg font-bold text-[#0F1419]">Security</Text>
+            <Text className="flex-1 text-center mr-6 text-lg font-bold text-[#0F1419]">
+              Security
+            </Text>
           </View>
 
           {/* Header Section */}
@@ -88,13 +93,21 @@ export default function ResetPasswordScreen() {
           <View className="mb-6">
             {/* New Password */}
             <View className="mb-4">
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">New Password</Text>
+              <Text className="text-sm font-bold text-[#0F1419] mb-2">
+                New Password
+              </Text>
               <Controller
                 control={control}
                 name="newPassword"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <View className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${errors.newPassword ? 'border-red-500' : 'border-[#E1E8ED]'}`}>
-                    <Feather name="lock" size={20} color={errors.newPassword ? "#EF4444" : "#A0ABC0"} />
+                  <View
+                    className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${errors.newPassword ? "border-red-500" : "border-[#E1E8ED]"}`}
+                  >
+                    <Feather
+                      name="lock"
+                      size={20}
+                      color={errors.newPassword ? "#EF4444" : "#A0ABC0"}
+                    />
                     <TextInput
                       className="flex-1 ml-3 text-base text-[#0F1419]"
                       placeholder="Enter new password"
@@ -104,24 +117,42 @@ export default function ResetPasswordScreen() {
                       onChangeText={onChange}
                       value={value}
                     />
-                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                      <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#A0ABC0" />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Feather
+                        name={showPassword ? "eye" : "eye-off"}
+                        size={20}
+                        color="#A0ABC0"
+                      />
                     </TouchableOpacity>
                   </View>
                 )}
               />
-              {errors.newPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.newPassword.message}</Text>}
+              {errors.newPassword && (
+                <Text className="mt-1 ml-1 text-xs text-red-500">
+                  {errors.newPassword.message}
+                </Text>
+              )}
             </View>
 
             {/* Confirm New Password */}
             <View className="mb-4">
-              <Text className="text-sm font-bold text-[#0F1419] mb-2">Confirm New Password</Text>
+              <Text className="text-sm font-bold text-[#0F1419] mb-2">
+                Confirm New Password
+              </Text>
               <Controller
                 control={control}
                 name="confirmPassword"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <View className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${errors.confirmPassword ? 'border-red-500' : 'border-[#E1E8ED]'}`}>
-                    <MaterialCommunityIcons name="lock-reset" size={22} color={errors.confirmPassword ? "#EF4444" : "#A0ABC0"} />
+                  <View
+                    className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${errors.confirmPassword ? "border-red-500" : "border-[#E1E8ED]"}`}
+                  >
+                    <MaterialCommunityIcons
+                      name="lock-reset"
+                      size={22}
+                      color={errors.confirmPassword ? "#EF4444" : "#A0ABC0"}
+                    />
                     <TextInput
                       className="flex-1 ml-3 text-base text-[#0F1419]"
                       placeholder="Confirm new password"
@@ -131,13 +162,23 @@ export default function ResetPasswordScreen() {
                       onChangeText={onChange}
                       value={value}
                     />
-                    <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-                      <Feather name={showConfirm ? "eye" : "eye-off"} size={20} color="#A0ABC0" />
+                    <TouchableOpacity
+                      onPress={() => setShowConfirm(!showConfirm)}
+                    >
+                      <Feather
+                        name={showConfirm ? "eye" : "eye-off"}
+                        size={20}
+                        color="#A0ABC0"
+                      />
                     </TouchableOpacity>
                   </View>
                 )}
               />
-              {errors.confirmPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.confirmPassword.message}</Text>}
+              {errors.confirmPassword && (
+                <Text className="mt-1 ml-1 text-xs text-red-500">
+                  {errors.confirmPassword.message}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -145,20 +186,24 @@ export default function ResetPasswordScreen() {
           <View className="mb-10">
             <View className="flex-row items-center mb-2">
               <Ionicons name="checkmark-circle" size={18} color="#00AA45" />
-              <Text className="ml-2 text-sm text-[#657786]">At least 8 characters long</Text>
+              <Text className="ml-2 text-sm text-[#657786]">
+                At least 8 characters long
+              </Text>
             </View>
             <View className="flex-row items-center">
               <Ionicons name="checkmark-circle" size={18} color="#00AA45" />
-              <Text className="ml-2 text-sm text-[#657786]">Include a symbol or number</Text>
+              <Text className="ml-2 text-sm text-[#657786]">
+                Include a symbol or number
+              </Text>
             </View>
           </View>
 
           {/* Primary Action Button */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             activeOpacity={0.8}
-            className={`bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20 ${isSubmitting ? 'opacity-70' : ''}`}
+            className={`bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20 ${isSubmitting ? "opacity-70" : ""}`}
           >
             <Text className="text-base font-bold text-white">
               {isSubmitting ? "Updating..." : "Update Password"}
@@ -166,14 +211,13 @@ export default function ResetPasswordScreen() {
           </TouchableOpacity>
 
           {/* Footer Link */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={navigationRouter.goLogin}
             className="flex-row items-center justify-center mt-auto"
           >
             <Text className="text-sm text-[#657786]">Back to </Text>
             <Text className="text-sm font-bold text-[#00AA45]">Login</Text>
           </TouchableOpacity>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
