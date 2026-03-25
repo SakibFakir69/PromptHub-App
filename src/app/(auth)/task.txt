@@ -5,7 +5,7 @@
 3. reset password (new password , confirm , email )
 4. ADD LOADING SCREEN
 5. HEIGHT AND WIDTH
-
+6. ADD CALLBACK
 
 # FIX SEND AND RECIVE OTP CODE
 # RE SEND OTP SHOW MESSAGE

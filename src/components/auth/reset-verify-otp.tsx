@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useResetOtpMutation } from '@/src/store/features/auth/auth.features';
+import { useResetOtpCodeMutation, useResetOtpMutation } from '@/src/store/features/auth/auth.features';
 import { useResendOtpMutation } from '@/src/store/features/otp/otp.features';
 
 export default function ResetVerifyOtpPage() {
@@ -24,8 +24,9 @@ export default function ResetVerifyOtpPage() {
 
   const [resetCode, { isLoading }] = useResetOtpMutation();
   const [resendOtp] = useResendOtpMutation();
+  const [resetOtpCode , {isLoading:isLoadingResetOtpCode}]= useResetOtpCodeMutation();
   
-  // FIX 2: Type-safe params extraction
+  
   const { email } = useLocalSearchParams<{ email: string }>();
   
   const handleOtpChange = (text: string, index: number) => {
@@ -75,7 +76,7 @@ export default function ResetVerifyOtpPage() {
   const handelResendOtp = async () => {
     try {
       
-      const result = await resendOtp({ email }).unwrap();
+      const result = await resetOtpCode({ email }).unwrap();
       console.log("Resend Success:", result);
       Alert.alert("Success", "OTP has been resent to your email.");
     } catch (error) {
