@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import { useRegisterUserMutation } from "@/src/store/features/user/user.features";
 import { router } from "expo-router";
 import { toastConfig } from "@/src/utils/toast.util";
+import LoadingScreen from "../ui/loading-screen";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -199,7 +200,7 @@ export default function RegisterPage() {
             activeOpacity={0.8}
             className="bg-[#00AA45] h-14 rounded-lg justify-center items-center mb-6 shadow-md"
           >
-            <Text className="text-base font-bold text-white">{isLoading ? "Loading.." : " Sign up "} </Text>
+            <Text className="text-base font-bold text-white">{isLoading ? <LoadingScreen/> : " Sign up "} </Text>
           </TouchableOpacity>
 
           {/* Footer Link */}
