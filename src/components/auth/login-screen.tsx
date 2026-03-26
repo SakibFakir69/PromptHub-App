@@ -19,6 +19,7 @@ import { useLoginUserMutation } from "@/src/store/features/auth/auth.features";
 import { useSendOtpMutation } from "@/src/store/features/otp/otp.features";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
+import LoadingScreen from "../ui/loading-screen";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,26 +48,34 @@ export default function LoginPage() {
     try {
       console.log("login user data");
       const result = await loginUser(data).unwrap();
-      console.log(result, " login data");
-      console.log(userEmail?.current);
+      
+      
+    
       await SecureStore.setItemAsync("accessToken", result.accessToken);
       await SecureStore.setItemAsync("refreshToken", result.refreshToken);
-      //// if not isVerifyTrue go otp section
-      // else go feed
-      console.log(result);
+    
+      console.log(result ,'',result?.data?.message);
+      
       if (result?.data?.isVerify) {
         router.replace("/explore");
       } else {
         const sendOtpResult = await sendOtp(userEmail?.current).unwrap();
         console.log(sendOtpResult, "otp");
-        setMessage(sendOtpResult?.data.message);
+        
+        
+        
         router.replace("/verify-otp");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error:any) {
+      console.log(error , 'error');
+      setMessage(error?.data?.message);
+      
     }
   };
 
+
+
+  
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
@@ -79,10 +88,8 @@ export default function LoginPage() {
           showsVerticalScrollIndicator={false}
         >
           {/* Logo Section */}
-          <View className="items-start mb-10">
-            <View className="bg-[#E6F6EC] p-3 rounded-2xl">
-              <Feather name="power" size={28} color="#00AA45" />
-            </View>
+          <View className="items-start mb-20">
+           
           </View>
 
           {/* Header Section */}
@@ -95,7 +102,7 @@ export default function LoginPage() {
 
           {/* Form Section */}
           <View className="space-y-4">
-            <Text className="mb-4 -mt-4">{message && message}</Text>
+            <Text className="mb-4 -mt-4 text-red-500">{message}</Text>
 
             {/* Email Address */}
             <View className="mb-4">
@@ -201,7 +208,7 @@ export default function LoginPage() {
             className="bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20"
           >
             <Text className="text-base font-bold text-white">
-              {isLoading ? "Loading.." : "Login"}
+              {isLoading ? <LoadingScreen/> : "Login"}
             </Text>
           </TouchableOpacity>
 
