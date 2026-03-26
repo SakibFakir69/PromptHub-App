@@ -18,11 +18,11 @@ import { IForgotPassword } from "@/src/types/auth/auth.type";
 import { useResetEmailMutation } from "@/src/store/features/auth/auth.features";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
-import { email } from "zod";
+import LoadingScreen from "@/src/components/ui/loading-screen";
 
 export default function ForgotPasswordScreen() {
   const [resetEmail] = useResetEmailMutation();
-  const [ email ,setEmail ] = useState("");
+ 
 
   const {
     control,
@@ -49,7 +49,7 @@ export default function ForgotPasswordScreen() {
 
       if(result?.status)
       {
-        /// take email
+        
         
         router.push({
           pathname:'/reset-verify-otp',
@@ -163,7 +163,7 @@ export default function ForgotPasswordScreen() {
             }`}
           >
             <Text className="text-base font-bold text-white">
-              {isSubmitting ? "Sending..." : "Send Code"}
+              {isSubmitting ? <LoadingScreen/> : "Send Code"}
             </Text>
           </TouchableOpacity>
 
