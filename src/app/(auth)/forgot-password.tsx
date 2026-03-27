@@ -22,6 +22,7 @@ import LoadingScreen from "@/src/components/ui/loading-screen";
 
 export default function ForgotPasswordScreen() {
   const [resetEmail] = useResetEmailMutation();
+  const [ message , setMessage ] = useState<string>('')
  
 
   const {
@@ -35,40 +36,34 @@ export default function ForgotPasswordScreen() {
     },
   });
 
-  const onSubmit: SubmitHandler<IForgotPassword> =async (data) => {
-   
+  const onSubmit: SubmitHandler<IForgotPassword> = async (data) => {
     console.log("Forgot Password Data:", data);
-    
 
     try {
-      const result = await  resetEmail(data).unwrap();
+      const result = await resetEmail(data).unwrap();
       console.log(result);
+    
+
       Toast.show({
-        text1:"Send otp to your email"
+        text1: "Send otp to your email",
       });
 
-      if(result?.status)
-      {
-        
-        
+      if (result?.status) {
         router.push({
-          pathname:'/reset-verify-otp',
-          params:{
-            email:data?.email
-          }
-        })
-        
-      }else{
-        console.log(result , ' forgot password')
+          pathname: "/reset-verify-otp",
+          params: {
+            email: data?.email,
+          },
+        });
+      } else {
+        console.log(result, " forgot password");
       }
-      
-    } catch (error) {
-      console.log(error)
+    } catch (error:any) {
+      console.log(error, 'error');
+      setMessage(error?.data?.message)
+
       
     }
-    
-    
-    
   };
 
   return (
@@ -83,7 +78,7 @@ export default function ForgotPasswordScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* Top Navigation Bar */}
-          <View className="flex-row items-center justify-between mb-10">
+          <View className="flex-row items-center justify-between mt-8 mb-10">
             <TouchableOpacity onPress={navigationRouter.goLogin}>
               <Feather name="arrow-left" size={24} color="#000" />
             </TouchableOpacity>
@@ -117,20 +112,20 @@ export default function ForgotPasswordScreen() {
             <Text className="text-sm font-bold text-[#0F1419] mb-2">
               Email Address
             </Text>
-            
+
             <Controller
               control={control}
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
-                <View 
+                <View
                   className={`flex-row items-center border rounded-xl bg-white px-4 h-14 ${
                     errors.email ? "border-red-500" : "border-[#E1E8ED]"
                   }`}
                 >
-                  <Feather 
-                    name="mail" 
-                    size={20} 
-                    color={errors.email ? "#EF4444" : "#A0ABC0"} 
+                  <Feather
+                    name="mail"
+                    size={20}
+                    color={errors.email ? "#EF4444" : "#A0ABC0"}
                   />
                   <TextInput
                     className="flex-1 ml-3 text-base text-[#0F1419]"
@@ -151,10 +146,12 @@ export default function ForgotPasswordScreen() {
                 {errors.email.message}
               </Text>
             )}
+            {message && ( <Text className="text-red-500">{message}</Text>)}
+
           </View>
 
           {/* Primary Action Button */}
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             activeOpacity={0.8}
@@ -163,7 +160,7 @@ export default function ForgotPasswordScreen() {
             }`}
           >
             <Text className="text-base font-bold text-white">
-              {isSubmitting ? <LoadingScreen/> : "Send Code"}
+              {isSubmitting ? <LoadingScreen /> : "Send Code"}
             </Text>
           </TouchableOpacity>
 
