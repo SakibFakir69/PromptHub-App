@@ -15,6 +15,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useResetOtpCodeMutation, useResetOtpMutation } from '@/src/store/features/auth/auth.features';
 import { useResendOtpMutation } from '@/src/store/features/otp/otp.features';
+import Toast from 'react-native-toast-message';
 
 export default function ResetVerifyOtpPage() {
   const [otpValue, setOtpValue] = useState(['', '', '', '']);
@@ -48,11 +49,15 @@ export default function ResetVerifyOtpPage() {
   };
 
   const onSubmit = async () => {
-    console.log("Submit pressed"); // This will now show up!
+    console.log("Submit pressed"); 
     const otpString = otpValue.join('');
     
     if (otpString.length < 4) {
-      Alert.alert("Error", "Please enter the full 4-digit code.");
+      Toast.show({
+        text1:"Please enter the full 4-digit code."
+        
+      })
+     
       return;
     }
 
@@ -66,10 +71,15 @@ export default function ResetVerifyOtpPage() {
           pathname: '/reset-password',
           params: { email: email }
         });
+        
       }
     } catch (error: any) {
-      Alert.alert("Verification Failed", error?.data?.message || "Invalid OTP code.");
+     
+      Toast.show({
+        text1:"Verification Failed" + error?.data?.message || "Invalid OTP code."
+      })
       console.log("Catch Error:", error);
+      
     }
   };
 
@@ -78,9 +88,18 @@ export default function ResetVerifyOtpPage() {
       
       const result = await resetOtpCode({ email }).unwrap();
       console.log("Resend Success:", result);
-      Alert.alert("Success", "OTP has been resent to your email.");
-    } catch (error) {
+     
+      Toast.show({
+        text1:"Success",
+        text2:"OTP has been resent to your email."
+      })
+      
+    } catch (error:any) {
       console.log("Resend Error:", error);
+      Toast.show({
+        text1:"Failed",
+        text2:error?.data?.message  || "Something went to wrong"
+      })
     }
   };
 
@@ -90,13 +109,16 @@ export default function ResetVerifyOtpPage() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
+        <Toast/>
+        
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           className="px-6 pt-6 pb-10"
           keyboardShouldPersistTaps="handled"
         >
+          
           {/* Header */}
-          <View className="flex-row items-center mb-10">
+          <View className="flex-row items-center mt-8 mb-10">
             <TouchableOpacity onPress={() => router.back()}>
               <Feather name="arrow-left" size={24} color="#0F1419" />
             </TouchableOpacity>

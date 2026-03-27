@@ -109,7 +109,7 @@ export default function VerifyOtpPage() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
-          <View className="flex-row items-center mb-10">
+          <View className="flex-row items-center mt-8 mb-10">
             <TouchableOpacity onPress={() => router.back()}>
               <Feather name="arrow-left" size={24} color="#0F1419" />
             </TouchableOpacity>

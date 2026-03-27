@@ -4,11 +4,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
+  
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,7 @@ import { IResetPassword } from "@/src/types/auth/auth.type";
 import { navigationRouter } from "@/src/navigation";
 import { useResetPasswordMutation } from "@/src/store/features/auth/auth.features";
 import { router, useLocalSearchParams } from "expo-router";
+import LoadingScreen from "@/src/components/ui/loading-screen";
 
 export default function ResetPasswordScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -72,12 +74,12 @@ export default function ResetPasswordScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* Header Navigation */}
-          <View className="flex-row items-center mb-12">
+          <View className="flex-row items-center mt-8 mb-12">
             <TouchableOpacity onPress={navigationRouter.goLogin}>
               <Feather name="arrow-left" size={24} color="#000" />
             </TouchableOpacity>
             <Text className="flex-1 text-center mr-6 text-lg font-bold text-[#0F1419]">
-              Security
+              Security 
             </Text>
           </View>
 
@@ -203,17 +205,17 @@ export default function ResetPasswordScreen() {
             onPress={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             activeOpacity={0.8}
-            className={`bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-10 shadow-lg shadow-[#00AA45]/20 ${isSubmitting ? "opacity-70" : ""}`}
+            className={`bg-[#00AA45] h-14 rounded-xl justify-center items-center mb-8 shadow-lg shadow-[#00AA45]/20 ${isSubmitting ? "opacity-70" : ""}`}
           >
             <Text className="text-base font-bold text-white">
-              {isSubmitting ? "Updating..." : "Update Password"}
+              {isSubmitting ? <LoadingScreen/> : "Update Password"}
             </Text>
           </TouchableOpacity>
 
           {/* Footer Link */}
           <TouchableOpacity
             onPress={navigationRouter.goLogin}
-            className="flex-row items-center justify-center mt-auto"
+            className="flex-row items-center justify-center "
           >
             <Text className="text-sm text-[#657786]">Back to </Text>
             <Text className="text-sm font-bold text-[#00AA45]">Login</Text>
