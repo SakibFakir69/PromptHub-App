@@ -3,6 +3,7 @@ import { baseApi } from "../../baseApi";
 export const authApi = baseApi.injectEndpoints({
     
   endpoints: (builder) => ({
+    
     getMe: builder.query({
       query: () => ({
         url: "/auth/me",
