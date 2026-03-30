@@ -10,8 +10,12 @@ export const baseApi = createApi({
     prepareHeaders: async (headers) => {
       const token = await SecureStore.getItemAsync("accessToken");
 
+      
+
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
+
+
       }
 
       return headers;
