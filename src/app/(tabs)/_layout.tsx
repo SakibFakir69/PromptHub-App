@@ -1,25 +1,42 @@
-import { Tabs } from "expo-router";
-import React from "react";
+import { router, Tabs } from "expo-router";
+import React, { useCallback, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
+import { authUtilsController } from "@/src/utils/auth/auth.utils";
 
 export default function TabLayout() {
+
+  const checkUser = useCallback(async () => {
+    try {
+      const result = await authUtilsController.isValidUser();
+
+      if (!result?.isExits) {
+        router.replace("/login");
+      }
+      // KEEP LOGIN
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#007AFF",
         tabBarInactiveTintColor: "gray",
-        
+
         tabBarStyle: {
           height: 90,
           paddingBottom: 8,
-          
-          
-          
-         
         },
       }}
     >
@@ -59,7 +76,6 @@ export default function TabLayout() {
                 bottom: 4,
                 justifyContent: "center",
                 alignItems: "center",
-               
               }}
             >
               <View

@@ -1,6 +1,5 @@
 import * as SecureStore from "expo-secure-store";
 
-
 const logOutUser = async () => {
   const accessToken = await SecureStore.getItemAsync("accessToken");
   const refreshToken = await SecureStore.getItemAsync("refreshToken");
@@ -16,26 +15,28 @@ const logOutUser = async () => {
 };
 
 const isValidUser = async () => {
-
   try {
     const accessToken = await SecureStore.getItemAsync("accessToken");
     const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
-    if(accessToken && refreshToken)
-    {
-        return {
-            isValidUser:true
-        }
+    if (accessToken && refreshToken) {
+      return {
+        isExits: true,
+      };
     }
-    //  IF VALID GO TO NEXT STEP 
-
-
+    //  IF VALID GO TO NEXT STEP
+    return {
+      isExits: false,
+    };
   } catch (error) {
     console.log(error);
+    return {
+      isExits: false,
+    };
   }
 };
 
-
-export const authUtilsController ={
-    logOutUser, isValidUser
-}
+export const authUtilsController = {
+  logOutUser,
+  isValidUser,
+};
