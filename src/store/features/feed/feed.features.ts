@@ -10,10 +10,13 @@ export const feedApi = baseApi.injectEndpoints({
 
 
         getFeed:builder.query({
-           query:()=>({
-            url:"",
-            method:""
+
+           query:(cursor)=>({
+            url:"/feed",
+            method:"GET",
+            params: cursor ? cursor : undefined
            })
+
         })
 
 
