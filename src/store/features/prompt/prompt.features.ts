@@ -13,8 +13,17 @@ export const promptApi = baseApi.injectEndpoints({
                 url:'/prompt/create-prompt',
                 method:"POST",
                 body:data,
-                
+
             })
+        })
+        ,
+        promptImageUpload:builder.mutation({
+            query:({data})=>({
+                url:"prompt/prompt-image",
+                method:"POST",
+                body:data
+            })
+
         })
 
 
@@ -22,4 +31,4 @@ export const promptApi = baseApi.injectEndpoints({
 
 })
 
-export const {useCreatePromptMutation} = promptApi;
+export const {useCreatePromptMutation,usePromptImageUploadMutation} = promptApi;

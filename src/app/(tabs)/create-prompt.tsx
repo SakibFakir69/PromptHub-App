@@ -1,12 +1,9 @@
 
 
-import { View, Text } from 'react-native'
+
 import React from 'react'
+import CreatePromptPage from '@/src/components/prompt/tabs/create-prompt'
 
 export default function CreatePrompt() {
-  return (
-    <View>
-      <Text>CreatePrompt</Text>
-    </View>
-  )
+  return <CreatePromptPage/>
 }
