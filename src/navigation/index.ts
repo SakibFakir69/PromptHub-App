@@ -12,7 +12,11 @@ const goLogin = ()=>{
 const forgotPassword = ()=>{
     router.replace('/forgot-password');
 }
+const backRoute = ()=>{
+    router.back();
+
+}
 
 export const navigationRouter = {
-    goRegister,goLogin,forgotPassword
+    goRegister,goLogin,forgotPassword , backRoute
 }

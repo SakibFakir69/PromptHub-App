@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { CreatePromptValidation } from '@/src/validation/tabs/tabs.validation';
 import { CreatePromptType } from '@/src/types/tabs/tabs.type';
+import { navigationRouter } from '@/src/navigation';
 
 const CreatePromptScreen = () => {
   const [isPublic, setIsPublic] = useState(true);
@@ -80,7 +81,7 @@ const CreatePromptScreen = () => {
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=> navigationRouter.backRoute()}>
           <Text className="text-lg text-gray-500">Cancel</Text>
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-gray-900">Create Prompt</Text>
