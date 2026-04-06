@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -27,20 +27,30 @@ import { CreatePromptValidation } from "@/src/validation/tabs/tabs.validation";
 import { CreatePromptType } from "@/src/types/tabs/tabs.type";
 import { navigationRouter } from "@/src/navigation";
 import Toast from "react-native-toast-message";
-import { useCreatePromptMutation } from "@/src/store/features/prompt/prompt.features";
-import LoadingScreen from "../../ui/loading-screen";
+import {
+  useCreatePromptMutation,
+  usePromptImageUploadMutation,
+} from "@/src/store/features/prompt/prompt.features";
+
+
+// HANDEL ERROR MESSAGE
 
 const CreatePromptScreen = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [tagInput, setTagInput] = useState("");
   const [loadingImage, setLoadingImage] = useState(false);
-  const [createPrompt ,{isLoading} ] = useCreatePromptMutation();
-  
+  const [createPrompt, { isLoading }] = useCreatePromptMutation();
+  const [promptImageUpload, { isLoading: isLoadinfUploadImage }] =
+    usePromptImageUploadMutation();
+
+    
+
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CreatePromptType>({
     // resolver: zodResolver(CreatePromptValidation),
@@ -71,13 +81,13 @@ const CreatePromptScreen = () => {
   };
 
   // Image Picker Logic
-  const pickImage = async () => {
+  const pickImage =useCallback( async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted") {
       Toast.show({
-        text2: "Permission Denied",
-        text1: "We need gallery permissions to make this work!",
+        text1: "Permission Denied",
+        text2: "We need gallery permissions to make this work!",
       });
       return;
     }
@@ -88,29 +98,61 @@ const CreatePromptScreen = () => {
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.7,
-      base64: true,
+      // base64: true,
     });
 
     if (!result.canceled) {
-      // Storing the base64 string in the form state
-      const base64 = `data:image/jpeg;base64,${result.assets[0].base64}`;
-      setValue("image", base64);
+      const imageUri = result.assets[0].uri;
+      setValue("image", imageUri);
     }
+
     setLoadingImage(false);
-  };
+  },[]);
 
-  const onSubmit: SubmitHandler<CreatePromptType> = (data) => {
-    console.log("Form Data:", { ...data, isPublic });
-
+  const onSubmit: SubmitHandler<CreatePromptType> = async (data) => {
     try {
+      if (!data.image) {
+        console.warn("No image selected, skipping upload.");
+        return;
+      }
+      // Create FormData
+      const formData = new FormData();
+      const uriParts = data?.image.split("/");
+      const fileName = uriParts[uriParts.length - 1];
+      const fileType = `image/${fileName.split(".").pop()}`;
 
+      formData.append("image", {
+        uri: data.image,
+        name: fileName,
+        type: fileType,
+      } as any); // 'as any' needed for React Native FormData
+
+      // Send to your upload function
+      const uploadImage = await promptImageUpload(formData).unwrap();
+      console.log("Upload response:", uploadImage?.url);
+      
+      const payload:CreatePromptType= {
+        title:data?.title,
+        prompt:data?.prompt,
+        tags:data?.tags,
+        image:uploadImage?.url
         
+      }
+      console.log(payload , 'payload');
+
+      const result = await createPrompt(payload).unwrap();
+      console.log(result , 'result');
+      reset();
+      
+
+    } catch (error: any) {
+      console.error("Submission Error:", error);
       Toast.show({
-        text1: "Success",
-        text2: "Prompt created successfully!",
+        type: "error",
+        text1: "Error",
+        text2:
+          error?.data?.error || "Upload failed. Please check your connection.",
       });
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -120,7 +162,11 @@ const CreatePromptScreen = () => {
       <Toast />
       <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
         <TouchableOpacity onPress={() => navigationRouter.backRoute()}>
-          <Text className="text-lg text-gray-500"> {!isLoading  && 'Cancel'}</Text>
+          
+          <Text className="text-lg text-gray-500">
+            {" "}
+            {!isLoading && "Cancel"}
+          </Text>
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-gray-900">
           Create Prompt
@@ -129,7 +175,10 @@ const CreatePromptScreen = () => {
           className="px-6 py-2 rounded-lg bg-emerald-500 active:opacity-80"
           onPress={handleSubmit(onSubmit)}
         >
-          <Text className="text-base font-bold text-white"> {isLoading ?<LoadingScreen/> :"Post "}</Text>
+          <Text className="text-base font-bold text-white">
+            {" "}
+            {isLoading ? "Posting" : "Post "}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -278,7 +327,7 @@ const CreatePromptScreen = () => {
             <>
               <ImageIcon size={20} color="#1A202C" />
               <Text className="ml-2 text-lg font-bold text-gray-900">
-                {selectedImage ? "Change Cover Image" : "Add Cover Image"}
+                {selectedImage ? "Change Cover Image" : "Add Image"}
               </Text>
             </>
           )}
