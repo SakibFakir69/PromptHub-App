@@ -1,3 +1,5 @@
 
-1. navigation 
-2. all mobile responsiveness
+
+
+ make producation ready code
+fix ui ux - feed full interaction with details page

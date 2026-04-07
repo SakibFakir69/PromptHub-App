@@ -1,33 +1,36 @@
-import { View, Text, ScrollView, FlatList,TouchableOpacity } from "react-native";
-import React from "react";
+import { View, FlatList } from "react-native";
+import React, { useState } from "react";
 import { useGetFeedQuery } from "@/src/store/features/feed/feed.features";
-import PromptCard from "@/src/components/feed/prompt-card";
-import { Header } from "@react-navigation/elements";
-
-const TABS = ["Trending", "Newest", "Following"] as const;
- const HeaderComponent = (
-    <View className="flex-row p-4 px-4 py-4 bg-white border-b border-gray-200">
-      {TABS.map((tab) => (
-        <TouchableOpacity
-          key={tab}
-         
-          className="py-3 mr-6"
-        >
-          <Text
-           
-          >
-            {tab}
-          </Text>
-          
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
+import PromptCard from "@/src/components/feed/feed-card";
+import HeaderComponent from "@/src/components/feed/feed-header";
+import LoadingScreen from "@/src/components/ui/loading-screen";
+import { TABS } from "@/src/constant/TABS";
 
 export default function Home() {
-  const { data: getFeed, isLoading } = useGetFeedQuery({ cursor: "" });
-  console.log(getFeed);
+  const [ activeTab , setActiveTab ] = useState<string>(TABS[0]);
+  const [ cursor , setCursor ] = useState("");
+
+  const { data: getFeed, isLoading ,isFetching} = useGetFeedQuery({ cursor:cursor });
+ 
   const feedData = getFeed?.data || [];
+  const nextCursor =getFeed?.nextCursor;
+
+  const handelTab = (tab:string)=>{
+    setActiveTab(tab);
+    console.log(tab);
+
+  };
+
+  const handelLoadMore = ()=>{
+    setCursor(nextCursor);
+  }
+
+
+
+  if(isLoading)
+  {
+    return <LoadingScreen/>
+  }
 
   return (
     <View>
@@ -40,7 +43,20 @@ export default function Home() {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => <PromptCard item={item} />}
           contentContainerClassName="py-3"
-          ListHeaderComponent={HeaderComponent}
+
+          ListHeaderComponent={<HeaderComponent activeTab={activeTab} onTabPress={handelTab}
+
+ 
+        
+          
+          />}
+          ListFooterComponent={isFetching  ? <LoadingScreen/> :null}
+
+          onEndReached={handelLoadMore}
+          onEndReachedThreshold={0.5}
+
+          refreshing={isFetching}
+
           stickyHeaderIndices={[0]}
           
           showsVerticalScrollIndicator={false}
