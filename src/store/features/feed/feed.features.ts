@@ -17,6 +17,16 @@ export const feedApi = baseApi.injectEndpoints({
             params: cursor ? cursor : undefined
            })
 
+        }),
+
+        GetPromptById:builder.query({
+            query:(id)=>({
+                
+                url:`/prompt/prompt-details/${id}`,
+                method:"GET",
+               
+               
+            })
         })
 
 
@@ -24,4 +34,4 @@ export const feedApi = baseApi.injectEndpoints({
 
 })
 
-export const {useGetFeedQuery } = feedApi;
+export const {useGetFeedQuery,useGetPromptByIdQuery } = feedApi;

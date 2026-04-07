@@ -1,15 +1,28 @@
-import { View, Text } from "react-native";
 import React from "react";
-import { usePathname } from "expo-router";
-import { useLocalSearchParams, useSearchParams } from "expo-router/build/hooks";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+
+import LoadingScreen from "@/src/components/ui/loading-screen";
+import { useGetPromptByIdQuery } from "@/src/store/features/feed/feed.features";
+
 
 export default function PromptDetails() {
-  const id = useLocalSearchParams();
-  console.log(id);
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  
+  // Fetch specific prompt data
+  const { data:item, isLoading, error } = useGetPromptByIdQuery(id);
+  
+  console.log(item, id);
+
+  if (isLoading) return <LoadingScreen />;
+ 
+
+ 
 
   return (
-    <View className="flex text-center">
-      <Text>prompt card details page</Text>
-    </View>
+    <ScrollView className="flex-1 bg-white">
+     {JSON.stringify(item)}
+    </ScrollView>
   );
 }
