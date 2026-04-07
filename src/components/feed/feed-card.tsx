@@ -1,6 +1,8 @@
+import { useDownVoteMutation, useUpVoteMutation } from "@/src/store/features/prompt/prompt.features";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import { it } from "zod/v4/locales";
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
@@ -94,11 +96,44 @@ interface PromptCardProps {
 }
 
 export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
-  const [upVote, setUpVote] = useState(item.upVote);
-  const [downVote, setDownVote] = useState(item.downVote);
+  
+ 
   const [myVote, setMyVote] = useState<"up" | "down" | null>(null);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const [upVote,{isLoading}] = useUpVoteMutation();
+  const [downVote,{isLoading:downVoteIsLoading}]= useDownVoteMutation();
+
+  const handelDownVote =async (data:string)=>{
+    console.log(data);
+
+    try {
+
+      const result = await downVote(data).unwrap();
+      console.log(result);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+   const handelUpVote =async (data:string)=>{
+    console.log(data);
+
+    try {
+
+      const result = await upVote(data).unwrap();
+      console.log(result);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+
+  
 
   const palette = avatarPalette(item.createdBy.name);
   const pType = getPromptType(item.prompt, item.tags);
@@ -109,7 +144,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
  
 
   function handleCopy() {
-    // Clipboard.setStringAsync(item.prompt); // expo-clipboard
+   
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
@@ -124,6 +159,9 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
     })
     
   }
+
+
+  // for voting count length
 
   return (
     <TouchableOpacity onPress={()=> handleTouchCard(item._id)}>
@@ -201,7 +239,9 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
         <View className="flex-row items-center justify-between px-4 py-3 mt-1.5">
           {/* Vote pill */}
           <View className="flex-row items-center bg-gray-100 rounded-full p-0.5 border border-black/[0.06]">
+          
             <TouchableOpacity
+            onPress={()=>handelUpVote(item._id)}
               
               className={`flex-row items-center gap-1 px-3 py-1.5 rounded-full ${
                 myVote === "up" ? "bg-green-700" : ""
@@ -219,13 +259,15 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
                   myVote === "up" ? "text-white" : "text-gray-600"
                 }`}
               >
-                {fmtCount(upVote)}
+              
               </Text>
             </TouchableOpacity>
 
             <View className="w-px h-4 bg-black/10 mx-0.5" />
 
             <TouchableOpacity
+
+            onPress={()=> handelDownVote(item._id)}
           
               className={`flex-row items-center gap-1 px-3 py-1.5 rounded-full ${
                 myVote === "down" ? "bg-red-100" : ""

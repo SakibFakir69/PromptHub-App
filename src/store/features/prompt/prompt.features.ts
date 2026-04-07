@@ -26,17 +26,17 @@ export const promptApi = baseApi.injectEndpoints({
 
         }),
         upVote:builder.mutation({
-            query:(data)=>({
+            query:(id)=>({
                 url:'/prompt/upVote',
                 method:"POST",
-                data:data
+                body:{ postId: id },
             })
         }),
           downVote:builder.mutation({
-            query:(data)=>({
-                url:'/prompt/upDown',
+            query:(id)=>({
+                url:'/prompt/downVote',
                 method:"POST",
-                data:data
+                body:{ postId: id },
             })
         })
 
