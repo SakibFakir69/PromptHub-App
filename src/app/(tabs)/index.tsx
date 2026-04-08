@@ -14,6 +14,7 @@ export default function Home() {
     data: getFeed,
     isLoading,
     isFetching,
+    refetch
   } = useGetFeedQuery({ cursor: cursor });
 
   const feedData = getFeed?.data || [];
@@ -37,7 +38,7 @@ export default function Home() {
       <FlatList
         data={feedData}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <PromptCard item={item} />}
+        renderItem={({ item }) => <PromptCard item={item} refetch={refetch} />}
         contentContainerClassName="py-3"
         ListHeaderComponent={
           <HeaderComponent activeTab={activeTab} onTabPress={handelTab} />

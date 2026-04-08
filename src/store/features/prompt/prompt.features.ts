@@ -14,7 +14,8 @@ export const promptApi = baseApi.injectEndpoints({
                 method:"POST",
                 body:data,
 
-            })
+            }),
+            invalidatesTags:['Prompt']
         })
         ,
         promptImageUpload:builder.mutation({
@@ -30,14 +31,19 @@ export const promptApi = baseApi.injectEndpoints({
                 url:'/prompt/upVote',
                 method:"POST",
                 body:{ postId: id },
-            })
+            }),
+              invalidatesTags: (id) => [
+    { type: "Prompt", id },
+    { type: "Prompt", id: "LIST" },
+  ],
         }),
           downVote:builder.mutation({
             query:(id)=>({
                 url:'/prompt/downVote',
                 method:"POST",
                 body:{ postId: id },
-            })
+            }),
+             invalidatesTags:['Prompt']
         })
 
 

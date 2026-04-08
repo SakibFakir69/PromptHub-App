@@ -12,6 +12,7 @@ export default function PromptDetails() {
 
   const { data: response, isLoading } = useGetPromptByIdQuery(id);
   const item = response?.data; // Extracting from your ReturnResponse wrapper
+  console.log(item);
 
   const handleCopy = async () => {
     await Clipboard.setStringAsync(item.prompt);

@@ -15,7 +15,8 @@ export const feedApi = baseApi.injectEndpoints({
             url:"/feed",
             method:"GET",
             params: cursor ? cursor : undefined
-           })
+           }),
+           providesTags:['Prompt']
 
         }),
 

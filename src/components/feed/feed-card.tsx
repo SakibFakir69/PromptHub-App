@@ -14,16 +14,14 @@ interface FeedItem {
   prompt: string;
   tags: string[];
   upVote: number;
+  upVotedBy:string[],
+  downVotedBy:string[],
   downVote: number;
   createdBy: { name: string; username?: string };
   createdAt: string;
 }
 
-// ── helpers ───────────────────────────────────────────────────────────────────
 
-function fmtCount(n: number): string {
-  return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `${n}`;
-}
 
 function timeAgo(iso: string): string {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -93,9 +91,10 @@ const TYPE_META: Record<
 
 interface PromptCardProps {
   item: FeedItem;
+  refetch: () => void;
 }
 
-export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
+export const PromptCard: React.FC<PromptCardProps> = ({ item ,refetch}) => {
   
  
   const [myVote, setMyVote] = useState<"up" | "down" | null>(null);
@@ -112,6 +111,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
 
       const result = await downVote(data).unwrap();
       console.log(result);
+      refetch();
       
     } catch (error) {
       console.log(error);
@@ -125,6 +125,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
 
       const result = await upVote(data).unwrap();
       console.log(result);
+      refetch();
       
     } catch (error) {
       console.log(error);
@@ -160,6 +161,8 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
     
   }
 
+  // 
+
 
   // for voting count length
 
@@ -191,10 +194,10 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
           </View>
 
           <TouchableOpacity
-            className="items-center justify-center w-8 h-8 rounded-full"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            className="items-center justify-center rounded-full"
+            
           >
-            <Text className="text-lg tracking-widest text-gray-300">···</Text>
+            <Text className="tracking-widest ">Follow</Text>
           </TouchableOpacity>
         </View>
 
@@ -252,7 +255,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
                   myVote === "up" ? "text-white" : "text-gray-500"
                 }`}
               >
-                ▲
+                ▲    {item?.upVotedBy?.length ?? 0}
               </Text>
               <Text
                 className={`text-[13px] font-semibold ${
@@ -278,14 +281,14 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item }) => {
                   myVote === "down" ? "text-red-700" : "text-gray-500"
                 }`}
               >
-                ▼
+                ▼  {item?.downVotedBy?.length ?? 0}
               </Text>
               <Text
                 className={`text-[13px] font-semibold ${
                   myVote === "down" ? "text-red-700" : "text-gray-600"
                 }`}
               >
-                {fmtCount(downVote)}
+               
               </Text>
             </TouchableOpacity>
           </View>
