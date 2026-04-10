@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { CheckCircle, Settings, Share2, LayoutGrid, Bookmark, MapPin } from 'lucide-react-native';
 import { IUser } from '@/src/types/user/user.types';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = ({ user }: { user: IUser }) => {
   return (
