@@ -5,6 +5,7 @@ import PromptCard from "@/src/components/feed/feed-card";
 import HeaderComponent from "@/src/components/feed/feed-header";
 import LoadingScreen from "@/src/components/ui/loading-screen";
 import { TABS } from "@/src/constant/TABS";
+import { PromptCardSkeleton } from "@/src/components/feed/feed-skeleton";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string>(TABS[0]);
@@ -14,7 +15,7 @@ export default function Home() {
     data: getFeed,
     isLoading,
     isFetching,
-    refetch
+    refetch,
   } = useGetFeedQuery({ cursor: cursor });
 
   const feedData = getFeed?.data || [];
@@ -30,7 +31,14 @@ export default function Home() {
   };
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <View>
+        <HeaderComponent activeTab={activeTab} onTabPress={handelTab} />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <PromptCardSkeleton key={i} />
+        ))}
+      </View>
+    );
   }
 
   return (
