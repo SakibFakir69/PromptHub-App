@@ -7,178 +7,167 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import {
-  ChevronLeft,
-  Lock,
-  Eye,
-  EyeOff,
-  ShieldCheck,
-} from "lucide-react-native";
+import { ChevronLeft, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useChangePasswordUserMutation } from "@/src/store/features/auth/auth.features";
+
+// 1. Define Validation Schema
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 const ChangePasswordScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+  const [changePasswordUser, { isLoading }] = useChangePasswordUserMutation();
+
+  // 2. Initialize Hook Form
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<ChangePasswordFormData>({
+    resolver: zodResolver(changePasswordSchema),
+    mode: "onChange",
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
-  //   password , newPassword
 
-  const [changePasswordUser] = useChangePasswordUserMutation();
-
-  const onSubmit =async ({currentPassword , newPassword, confirmPassword}:{currentPassword:string, newPassword:string, confirmPassword:string})=>{
-
+  // 3. Handle Submit
+  const onSubmit = async (data: ChangePasswordFormData) => {
     try {
-        const payload:{password:string, newPassword:string}={
-            password:currentPassword,
-            newPassword:newPassword
-        }
-        
-        const result = await changePasswordUser(payload).unwrap();
-        // show message ui or toast 
-        
+      const payload = {
+        password: data.currentPassword,
+        newPassword: data.newPassword,
+      };
+      const result = await changePasswordUser(payload).unwrap();
+      console.log("Success:", result);
+      reset(); // Clear form on success
     } catch (error) {
-        console.log(error);
-        
+      console.log("Error:", error);
     }
-    
-  }
-
-  
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="px-6">
+          
           {/* Header */}
           <View className="flex-row items-center py-6">
             <TouchableOpacity className="p-2 bg-gray-100 rounded-full">
               <ChevronLeft size={24} color="#1A1A1A" />
             </TouchableOpacity>
-            <Text className="ml-4 text-xl font-bold text-gray-900">
-              Security
-            </Text>
+            <Text className="ml-4 text-xl font-bold text-gray-900">Security</Text>
           </View>
 
-          {/* Intro Text */}
           <View className="mt-4 mb-8">
-            <Text className="text-2xl font-extrabold text-gray-900">
-              Change Password
-            </Text>
+            <Text className="text-2xl font-extrabold text-gray-900">Change Password</Text>
             <Text className="mt-2 leading-5 text-gray-500">
-              Choose a strong password with at least 8 characters to keep your
-              account secure.
+              Choose a strong password with at least 8 characters.
             </Text>
           </View>
 
           {/* Form Fields */}
           <View className="space-y-5">
+            
             {/* Current Password */}
             <View>
-              <Text className="mb-2 ml-1 font-semibold text-gray-700">
-                Current Password
-              </Text>
-              <View className="flex-row items-center px-4 border border-gray-200 bg-gray-50 rounded-2xl h-14">
-                <Lock size={20} color="#9CA3AF" />
-                <TextInput
-                  className="flex-1 ml-3 text-gray-900"
-                  placeholder="Enter current password"
-                  secureTextEntry={!showPassword}
-                  value={formData.currentPassword}
-                  onChangeText={(val) =>
-                    setFormData({ ...formData, currentPassword: val })
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff size={20} color="#9CA3AF" />
-                  ) : (
-                    <Eye size={20} color="#9CA3AF" />
-                  )}
-                </TouchableOpacity>
-              </View>
+              <Text className="mb-2 ml-1 font-semibold text-gray-700">Current Password</Text>
+              <Controller
+                control={control}
+                name="currentPassword"
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex-row items-center px-4 border border-gray-200 bg-gray-50 rounded-2xl h-14">
+                    <Lock size={20} color="#9CA3AF" />
+                    <TextInput
+                      className="flex-1 ml-3 text-gray-900"
+                      placeholder="Enter current password"
+                      secureTextEntry={!showPassword}
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <EyeOff size={20} color="#9CA3AF" /> : <Eye size={20} color="#9CA3AF" />}
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+              {errors.currentPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.currentPassword.message}</Text>}
             </View>
 
             {/* New Password */}
             <View>
-              <Text className="mb-2 ml-1 font-semibold text-gray-700">
-                New Password
-              </Text>
-              <View className="flex-row items-center px-4 border border-gray-200 bg-gray-50 rounded-2xl h-14">
-                <ShieldCheck size={20} color="#9CA3AF" />
-                <TextInput
-                  className="flex-1 ml-3 text-gray-900"
-                  placeholder="Enter new password"
-                  secureTextEntry={!showPassword}
-                  value={formData.newPassword}
-                  onChangeText={(val) =>
-                    setFormData({ ...formData, newPassword: val })
-                  }
-                />
-              </View>
+              <Text className="mb-2 ml-1 font-semibold text-gray-700">New Password</Text>
+              <Controller
+                control={control}
+                name="newPassword"
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex-row items-center px-4 border border-gray-200 bg-gray-50 rounded-2xl h-14">
+                    <ShieldCheck size={20} color="#9CA3AF" />
+                    <TextInput
+                      className="flex-1 ml-3 text-gray-900"
+                      placeholder="Enter new password"
+                      secureTextEntry={!showPassword}
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  </View>
+                )}
+              />
+              {errors.newPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.newPassword.message}</Text>}
             </View>
 
-            {/* Confirm New Password */}
+            {/* Confirm Password */}
             <View>
-              <Text className="mb-2 ml-1 font-semibold text-gray-700">
-                Confirm New Password
-              </Text>
-              <View
-                className={`flex-row items-center bg-gray-50 border rounded-2xl px-4 h-14 ${
-                  formData.confirmPassword &&
-                  formData.newPassword !== formData.confirmPassword
-                    ? "border-red-400"
-                    : "border-gray-200"
-                }`}
-              >
-                <ShieldCheck size={20} color="#9CA3AF" />
-                <TextInput
-                  className="flex-1 ml-3 text-gray-900"
-                  placeholder="Repeat new password"
-                  secureTextEntry={!showPassword}
-                  value={formData.confirmPassword}
-                  onChangeText={(val) =>
-                    setFormData({ ...formData, confirmPassword: val })
-                  }
-                />
-              </View>
-              {formData.confirmPassword &&
-                formData.newPassword !== formData.confirmPassword && (
-                  <Text className="mt-2 ml-1 text-xs text-red-500">
-                    Passwords do not match
-                  </Text>
+              <Text className="mb-2 ml-1 font-semibold text-gray-700">Confirm New Password</Text>
+              <Controller
+                control={control}
+                name="confirmPassword"
+                render={({ field: { onChange, value } }) => (
+                  <View className={`flex-row items-center bg-gray-50 border rounded-2xl px-4 h-14 ${errors.confirmPassword ? "border-red-400" : "border-gray-200"}`}>
+                    <ShieldCheck size={20} color="#9CA3AF" />
+                    <TextInput
+                      className="flex-1 ml-3 text-gray-900"
+                      placeholder="Repeat new password"
+                      secureTextEntry={!showPassword}
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  </View>
                 )}
+              />
+              {errors.confirmPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.confirmPassword.message}</Text>}
             </View>
           </View>
 
           {/* Action Button */}
           <View className="pt-10 mt-auto mb-10">
             <TouchableOpacity
-              className={`h-14 rounded-2xl items-center justify-center shadow-sm ${
-                formData.newPassword.length >= 8 &&
-                formData.newPassword === formData.confirmPassword
-                  ? "bg-black"
-                  : "bg-gray-300"
-              }`}
-              disabled={formData.newPassword.length < 8}
+              onPress={handleSubmit(onSubmit)}
+              className={`h-14 rounded-2xl items-center justify-center shadow-sm ${isValid && !isLoading ? "bg-black" : "bg-gray-300"}`}
+              disabled={!isValid || isLoading}
             >
-              <Text className="text-lg font-bold text-white">
-                Update Password
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity className="items-center mt-4">
-              <Text className="font-medium text-gray-500">
-                Forgot Password?
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-lg font-bold text-white">Update Password</Text>
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
