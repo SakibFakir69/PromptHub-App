@@ -19,6 +19,7 @@ import { IUser, GenderEnum } from "@/src/types/user/user.types";
 import { editProfileSchema } from "@/src/validation/profile/profile.validation";
 import { SUGGESTED_TAGS } from "@/src/utils/profile/profile.utils";
 import { GENDER_OPTIONS } from "@/src/constant/profile.contant";
+import { useUpdateProfileMutation } from "@/src/store/features/profile/profile.features";
 
 type EditProfileFormValues = z.infer<typeof editProfileSchema>;
 interface EditProfileScreenProps {
@@ -32,6 +33,7 @@ interface EditProfileScreenProps {
 const EditProfileScreen = ({ user, onBack }: EditProfileScreenProps) => {
   const [showGenderPicker, setShowGenderPicker] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const [updateProfile, {isLoading}] = useUpdateProfileMutation();
 
   const {
     control,
@@ -55,7 +57,20 @@ const EditProfileScreen = ({ user, onBack }: EditProfileScreenProps) => {
 
   const onSubmit = async (data: EditProfileFormValues) => {
     console.log(data);
-    onBack();
+    
+    
+
+    try {
+        const result = await updateProfile(data).unwrap();
+        console.log(result);
+        onBack();
+        
+        
+    } catch (error) {
+        console.log(error);
+        
+    }
+    
   };
 
   const addTag = (tag: string) => {
