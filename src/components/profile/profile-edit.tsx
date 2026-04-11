@@ -58,11 +58,12 @@ const EditProfileScreen = ({ user, onBack }: EditProfileScreenProps) => {
   const onSubmit = async (data: EditProfileFormValues) => {
     console.log(data);
     
+    console.log(isLoading);
     
 
     try {
         const result = await updateProfile(data).unwrap();
-        console.log(result);
+        console.log(result, ' update profile');
         onBack();
         
         

@@ -10,7 +10,8 @@ export const profileApi = baseApi.injectEndpoints({
                 url:'/user/update-user',
                 method:"PUT",
                 body:data
-            })
+            }),
+            invalidatesTags:['Auth']
         })
     })
 
