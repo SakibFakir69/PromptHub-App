@@ -22,3 +22,10 @@ export interface IUser {
   id:string, /// virtual id
   
 }
+
+
+export enum  GenderEnum{
+  MALE="MALE",
+  FEMALE="FEMALE",
+  OTHERS="OTHERS"
+}

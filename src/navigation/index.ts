@@ -16,7 +16,13 @@ const backRoute = ()=>{
     router.back();
 
 }
+const goSetting = ()=>{
+    router.push('/profile/setting')
+}
+const goEditProfile = ()=>{
+    router.push('/profile/edit-profile');
+}
 
 export const navigationRouter = {
-    goRegister,goLogin,forgotPassword , backRoute
+    goRegister,goLogin,forgotPassword , backRoute , goSetting,goEditProfile
 }

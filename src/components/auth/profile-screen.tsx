@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { CheckCircle, Settings, Share2, LayoutGrid, Bookmark, MapPin } from 'lucide-react-native';
 import { IUser } from '@/src/types/user/user.types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { navigationRouter } from '@/src/navigation';
 
 
 
@@ -14,11 +15,13 @@ const ProfileScreen = ({ user ,isLoading }: { user: IUser, isLoading:any }) => {
         
         {/* Top Navigation Bar */}
         <View className="flex-row items-center justify-between px-6 py-4">
+          
           <TouchableOpacity activeOpacity={0.7} className="p-2 bg-gray-100 rounded-full">
             <Share2 size={20} color="#374151" />
           </TouchableOpacity>
+          
           <Text className="text-lg font-bold text-gray-900">Profile</Text>
-          <TouchableOpacity activeOpacity={0.7} className="p-2 bg-gray-100 rounded-full">
+          <TouchableOpacity onPress={()=> navigationRouter.goSetting()}  activeOpacity={0.7} className="p-2 bg-gray-100 rounded-full">
             <Settings size={20} color="#374151" />
           </TouchableOpacity>
         </View>
@@ -75,6 +78,7 @@ const ProfileScreen = ({ user ,isLoading }: { user: IUser, isLoading:any }) => {
         {/* Action Buttons */}
         <View className="flex-row px-6 mt-6 space-x-3">
           <TouchableOpacity 
+          onPress={()=> navigationRouter.goEditProfile()} 
             className="items-center justify-center flex-1 h-12 bg-black shadow-sm rounded-xl"
             activeOpacity={0.8}
           >
