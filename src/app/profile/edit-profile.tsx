@@ -11,9 +11,7 @@ export default function EditProfile() {
       const {data:userData,isLoading} = useGetMeQuery(null);
       
       const data= userData?.data || [];
-      const handelOnSave = ()=>{
-        console.log("on saved clicked")
-      }
+     
 
   return (
     <EditProfileScreen user={data} onBack={()=>router.back() } />

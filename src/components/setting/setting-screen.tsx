@@ -113,7 +113,7 @@ const SettingGroup = ({ children }: { children: React.ReactNode }) => (
   </View>
 );
 
-// ─── Main Screen ──────────────────────────────────────────────────────────────
+
 
 export default function SettingScreen({ user, onLogout }: SettingScreenProps) {
   const [notifications, setNotifications] = useState<NotificationState>({
