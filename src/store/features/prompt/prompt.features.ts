@@ -36,12 +36,14 @@ export const promptApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Prompt"],
     }),
-    getPrompt:builder.mutation({
-        query:()=>({
-            url:'/prompt/get-prompt',
-            method:"GET"
-        })
-    })
+
+    getMyPrompt: builder.query({
+      query: () => ({
+        url: "/prompt/get-prompt",
+        method: "GET",
+      }),
+      providesTags: ["Prompt"],
+    }),
   }),
 });
 
@@ -50,4 +52,5 @@ export const {
   usePromptImageUploadMutation,
   useUpVoteMutation,
   useDownVoteMutation,
+  useGetMyPromptQuery,
 } = promptApi;
