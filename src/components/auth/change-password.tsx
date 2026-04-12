@@ -32,6 +32,7 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 const ChangePasswordScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [changePasswordUser, { isLoading }] = useChangePasswordUserMutation();
+  const [ message , setMessage ] = useState("");
 
   // 2. Initialize Hook Form
   const {
@@ -58,6 +59,7 @@ const ChangePasswordScreen = () => {
       };
       const result = await changePasswordUser(payload).unwrap();
       console.log("Success:", result);
+      setMessage(result?.message);
       reset(); // Clear form on success
     } catch (error) {
       console.log("Error:", error);
@@ -154,6 +156,7 @@ const ChangePasswordScreen = () => {
                 )}
               />
               {errors.confirmPassword && <Text className="mt-1 ml-1 text-xs text-red-500">{errors.confirmPassword.message}</Text>}
+              {message ? <Text className="text-green">{message}</Text> : <Text></Text>}
             </View>
           </View>
 

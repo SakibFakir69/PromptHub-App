@@ -232,6 +232,7 @@ export default function SettingScreen({ user, onLogout }: SettingScreenProps) {
             icon={<User size={17} color="#185FA5" />}
             iconBg="#E6F1FB"
             label="Edit profile"
+            onPress={()=> router.push('/profile/edit-profile')}
             
           />
           <Divider />
