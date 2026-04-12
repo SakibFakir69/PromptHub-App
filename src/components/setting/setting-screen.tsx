@@ -127,6 +127,7 @@ export default function SettingScreen({ user, onLogout }: SettingScreenProps) {
     privateAccount: false,
     activityStatus: true,
   });
+  
 
   const toggleNotification = (key: keyof NotificationState) => {
     setNotifications(prev => {
