@@ -165,6 +165,8 @@ export default function SettingScreen({ user, onLogout }: SettingScreenProps) {
       { text: 'Cancel', style: 'cancel' },
       { text: 'Log out', style: 'destructive', onPress: onLogout },
     ]);
+    console.log("handel logout clicked")
+    
   };
 
   const ToggleSwitch = ({
