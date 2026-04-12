@@ -234,6 +234,7 @@ export default function SettingScreen({ user, onLogout }: SettingScreenProps) {
           />
           <Divider />
           <RowItem
+          onPress={()=> navigationRouter.goChangePassword()}
             icon={<Lock size={17} color="#3B6D11" />}
             iconBg="#EAF3DE"
             label="Change password"

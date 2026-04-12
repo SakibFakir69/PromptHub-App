@@ -1,4 +1,5 @@
 import { router } from "expo-router"
+import ChangePassword from "../app/(auth)/change-password"
 
 
 
@@ -23,6 +24,10 @@ const goEditProfile = ()=>{
     router.push('/profile/edit-profile');
 }
 
+const goChangePassword = ()=>{
+    router.push('/change-password');
+}
+
 export const navigationRouter = {
-    goRegister,goLogin,forgotPassword , backRoute , goSetting,goEditProfile
+    goRegister,goLogin,forgotPassword , backRoute , goSetting,goEditProfile,goChangePassword
 }

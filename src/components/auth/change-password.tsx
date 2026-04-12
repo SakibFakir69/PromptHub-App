@@ -15,6 +15,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useChangePasswordUserMutation } from "@/src/store/features/auth/auth.features";
+import { navigationRouter } from "@/src/navigation";
 
 // 1. Define Validation Schema
 const changePasswordSchema = z.object({
@@ -70,7 +71,7 @@ const ChangePasswordScreen = () => {
           
           {/* Header */}
           <View className="flex-row items-center py-6">
-            <TouchableOpacity className="p-2 bg-gray-100 rounded-full">
+            <TouchableOpacity onPress={()=> navigationRouter.backRoute()} className="p-2 bg-gray-100 rounded-full">
               <ChevronLeft size={24} color="#1A1A1A" />
             </TouchableOpacity>
             <Text className="ml-4 text-xl font-bold text-gray-900">Security</Text>
