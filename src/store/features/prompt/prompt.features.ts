@@ -44,6 +44,16 @@ export const promptApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Prompt"],
     }),
+    savedPrompt:builder.mutation({
+      query:(data)=>({
+        url:"/prompt/saved-prompt",
+        method:"POST",
+        body:data
+
+      }),
+      invalidatesTags:["Prompt"]
+    })
+
   }),
 });
 
@@ -53,4 +63,5 @@ export const {
   useUpVoteMutation,
   useDownVoteMutation,
   useGetMyPromptQuery,
+  useSavedPromptMutation
 } = promptApi;

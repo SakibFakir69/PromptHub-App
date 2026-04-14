@@ -3,6 +3,7 @@ import "./../../global.css";
 import { usePathname } from "expo-router";
 import { Provider } from "react-redux";
 import { store } from "../store/store";
+import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
   const path = usePathname();
@@ -15,7 +16,8 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
-      ;
+      
+      <Toast/>
     </Provider>
   );
 }
