@@ -145,7 +145,7 @@ const MyPrompt = ({
     );
   };
 
-  // ── Empty state ──────────────────────────────────────────────
+ 
   if (data.length === 0) {
     return (
       <View className="items-center justify-center gap-3 px-8 py-16">
@@ -168,7 +168,7 @@ const MyPrompt = ({
     );
   }
 
-  // ── Grid ─────────────────────────────────────────────────────
+  
   return (
     <>
       <FlatList
@@ -179,6 +179,7 @@ const MyPrompt = ({
         scrollEnabled={false}
         ItemSeparatorComponent={() => <View className="h-0.5 bg-gray-100" />}
         columnWrapperStyle={{ gap: 2 }}
+        
       />
 
       {/* ── Bottom sheet modal ─────────────────────────────── */}

@@ -44,16 +44,37 @@ export const promptApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Prompt"],
     }),
-    savedPrompt:builder.mutation({
-      query:(data)=>({
-        url:"/prompt/saved-prompt",
-        method:"POST",
-        body:data
-
+    savedPrompt: builder.mutation({
+      query: (data) => ({
+        url: "/prompt/saved-prompt",
+        method: "POST",
+        body: data,
       }),
-      invalidatesTags:["Prompt"]
-    })
+      invalidatesTags: ["Prompt"],
+    }),
 
+    getSavedPrompt: builder.query({
+      query: () => ({
+        url: "/prompt/saved-prompt",
+        method: "GET",
+      }),
+      providesTags: ["Prompt"],
+    }),
+
+    deletePrompt: builder.mutation({
+      query: ({ id }) => ({
+        url: `/delete-prompt/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Prompt"],
+    }),
+    updatePrompt: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/update-prompt/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -63,5 +84,8 @@ export const {
   useUpVoteMutation,
   useDownVoteMutation,
   useGetMyPromptQuery,
-  useSavedPromptMutation
+  useSavedPromptMutation,
+  useGetSavedPromptQuery,
+  useDeletePromptMutation,
+  useUpdatePromptMutation
 } = promptApi;

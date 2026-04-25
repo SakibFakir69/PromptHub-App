@@ -140,6 +140,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item, refetch }) => {
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
+  
   const handleTouchCard = (id: string | number) => {
     console.log("touched", id);
 
@@ -150,12 +151,13 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item, refetch }) => {
       },
     });
   };
+  
 
-  const handelSavedPrompt = async (promptId: string | number) => {
-    console.log(promptId, " prompt id");
+  const handelSavedPrompt = async (item:any) => {
+    console.log(item, " prompt id");
 
     try {
-      const result = await savedPrompt({ promptId }).unwrap();
+      const result = await savedPrompt(item).unwrap();
       console.log(result, "saved prompt");
       
       Toast.show({
@@ -289,7 +291,7 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item, refetch }) => {
           {/* Right actions */}
           <View className="flex-row items-center gap-2">
             <TouchableOpacity
-              onPress={() => handelSavedPrompt(item._id)}
+              onPress={() => handelSavedPrompt(item)}
               className={`w-9 h-9 rounded-full items-center justify-center border ${
                 saved
                   ? "bg-green-50 border-green-300"

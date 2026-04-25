@@ -12,7 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { navigationRouter } from "@/src/navigation";
 import SavedPrompt from "../prompt/saved-prompt";
 import MyPrompt from "../prompt/my-prompt";
-import { useGetMyPromptQuery } from "@/src/store/features/prompt/prompt.features";
+import { useGetMyPromptQuery, useGetSavedPromptQuery } from "@/src/store/features/prompt/prompt.features";
+import saved from "@/src/app/(tabs)/saved";
 
 const ProfileScreen = ({
   user,
@@ -23,7 +24,10 @@ const ProfileScreen = ({
 }) => {
   const [activeTab, setActiveTab] = useState("my");
   const { data: promptData } = useGetMyPromptQuery(null);
+  const {data:savedPromptData, isLoading:isSavedPromptLoading} = useGetSavedPromptQuery(null);
+  console.log(savedPromptData , 'data')
   const myPromptData = promptData?.data || [];
+  const savedPrompt = savedPromptData?.data || [];
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -159,7 +163,7 @@ const ProfileScreen = ({
           {activeTab === "my" ? (
             <MyPrompt data={myPromptData} />
           ) : (
-            <SavedPrompt />
+            <SavedPrompt prompt={savedPrompt} isLoading={isSavedPromptLoading} />
           )}
         </View>
       </ScrollView>
