@@ -63,14 +63,15 @@ export const promptApi = baseApi.injectEndpoints({
 
     deletePrompt: builder.mutation({
       query: ({ id }) => ({
-        url: `/delete-prompt/${id}`,
+        url: `/prompt/delete-prompt/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Prompt"],
     }),
+
     updatePrompt: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/update-prompt/${id}`,
+        url: `/prompt/update-prompt/${id}`,
         method: "PUT",
         body: data,
       }),

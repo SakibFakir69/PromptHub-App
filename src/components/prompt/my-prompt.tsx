@@ -9,7 +9,13 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
+import * as SecureStore from "expo-secure-store";
 import { Heart, Eye, X, Edit2, Trash2, Globe, Lock } from "lucide-react-native";
+import {
+  useDeletePromptMutation,
+  useUpdatePromptMutation,
+} from "@/src/store/features/prompt/prompt.features";
+import Toast from "react-native-toast-message";
 
 const { width } = Dimensions.get("window");
 const CARD_SIZE = Math.floor((width - 4) / 3);
@@ -28,13 +34,13 @@ interface Prompt {
 const DEFAULT_EMOJIS = ["✍️", "🧠", "💼", "🎨", "📊", "🤖", "📧", "🔍", "🧪"];
 
 const TAG_STYLE: Record<string, { container: string; text: string }> = {
-  Writing:   { container: "bg-sky-100",     text: "text-sky-800"     },
-  Education: { container: "bg-teal-100",    text: "text-teal-800"    },
-  Business:  { container: "bg-violet-100",  text: "text-violet-800"  },
-  Design:    { container: "bg-orange-100",  text: "text-orange-800"  },
-  Analytics: { container: "bg-green-100",   text: "text-green-800"   },
-  AI:        { container: "bg-blue-100",    text: "text-blue-800"    },
-  Dev:       { container: "bg-emerald-100", text: "text-emerald-800" },
+  Writing: { container: "bg-sky-100", text: "text-sky-800" },
+  Education: { container: "bg-teal-100", text: "text-teal-800" },
+  Business: { container: "bg-violet-100", text: "text-violet-800" },
+  Design: { container: "bg-orange-100", text: "text-orange-800" },
+  Analytics: { container: "bg-green-100", text: "text-green-800" },
+  AI: { container: "bg-blue-100", text: "text-blue-800" },
+  Dev: { container: "bg-emerald-100", text: "text-emerald-800" },
 };
 
 const DEFAULT_TAG = { container: "bg-gray-100", text: "text-gray-700" };
@@ -48,17 +54,70 @@ interface MyPromptProps {
 
 const MyPrompt = ({
   data = [],
-  onEdit,
-  onDelete,
+
   onTogglePublic,
 }: MyPromptProps) => {
   const [selected, setSelected] = useState<Prompt | null>(null);
   // Local visibility state so UI updates immediately without waiting for API
   const [publicMap, setPublicMap] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(data.map((p) => [p._id, p.isPublic ?? true]))
+    Object.fromEntries(data.map((p) => [p._id, p.isPublic ?? true])),
   );
 
   const isPublic = (id: string) => publicMap[id] ?? true;
+
+  const [deletePrompt, { isLoading }] = useDeletePromptMutation();
+  const [updatePrompt, { isLoading: isUpdateLoading }] =
+    useUpdatePromptMutation();
+
+const handelDeletePrompt = (id: number | string) => {
+  console.log(id);
+  
+  Alert.alert(
+    "Confirm Delete",
+    "Are you sure you want to delete this prompt?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const result = await deletePrompt({ id }).unwrap();
+            console.log("Deleted:", result);
+            setSelected(null);
+            
+          } catch (error) {
+            console.log(error);
+          }
+        },
+      },
+    ]
+  );
+};
+
+
+
+
+  const handleUpdatePrompt = async (id: number, data: any) => {
+    try {
+      await updatePrompt({ id, data }).unwrap();
+
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Prompt updated successfully ",
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Update failed ❌",
+      });
+    }
+  };
 
   const handleTogglePublic = (id: string) => {
     const next = !publicMap[id];
@@ -66,26 +125,8 @@ const MyPrompt = ({
     onTogglePublic?.(id, next);
     // Update selected state too
     if (selected?._id === id) {
-      setSelected((s) => s ? { ...s, isPublic: next } : s);
+      setSelected((s) => (s ? { ...s, isPublic: next } : s));
     }
-  };
-
-  const handleDelete = (id: string) => {
-    Alert.alert(
-      "Delete prompt",
-      "This prompt will be permanently deleted. Are you sure?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            setSelected(null);
-            onDelete?.(id);
-          },
-        },
-      ]
-    );
   };
 
   const renderCard = ({ item, index }: { item: Prompt; index: number }) => {
@@ -145,7 +186,6 @@ const MyPrompt = ({
     );
   };
 
- 
   if (data.length === 0) {
     return (
       <View className="items-center justify-center gap-3 px-8 py-16">
@@ -162,13 +202,14 @@ const MyPrompt = ({
           className="px-6 py-3 mt-2 bg-black rounded-xl"
           activeOpacity={0.8}
         >
-          <Text className="text-sm font-semibold text-white">Create prompt</Text>
+          <Text className="text-sm font-semibold text-white">
+            Create prompt
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  
   return (
     <>
       <FlatList
@@ -179,7 +220,6 @@ const MyPrompt = ({
         scrollEnabled={false}
         ItemSeparatorComponent={() => <View className="h-0.5 bg-gray-100" />}
         columnWrapperStyle={{ gap: 2 }}
-        
       />
 
       {/* ── Bottom sheet modal ─────────────────────────────── */}
@@ -221,7 +261,10 @@ const MyPrompt = ({
                 <Text className="mb-1 text-base font-bold text-gray-900">
                   {selected?.title}
                 </Text>
-                <Text className="text-sm leading-5 text-gray-500" numberOfLines={3}>
+                <Text
+                  className="text-sm leading-5 text-gray-500"
+                  numberOfLines={3}
+                >
                   {selected?.body}
                 </Text>
               </View>
@@ -229,16 +272,17 @@ const MyPrompt = ({
 
             {/* Meta pills */}
             <View className="flex-row flex-wrap gap-2 mb-4">
-              {selected?.tag && (() => {
-                const ts = TAG_STYLE[selected.tag] ?? DEFAULT_TAG;
-                return (
-                  <View className={`px-3 py-1 rounded-full ${ts.container}`}>
-                    <Text className={`text-xs font-semibold ${ts.text}`}>
-                      {selected.tag}
-                    </Text>
-                  </View>
-                );
-              })()}
+              {selected?.tag &&
+                (() => {
+                  const ts = TAG_STYLE[selected.tag] ?? DEFAULT_TAG;
+                  return (
+                    <View className={`px-3 py-1 rounded-full ${ts.container}`}>
+                      <Text className={`text-xs font-semibold ${ts.text}`}>
+                        {selected.tag}
+                      </Text>
+                    </View>
+                  );
+                })()}
               <View className="flex-row items-center gap-1 px-3 py-1 bg-gray-100 rounded-full">
                 <Heart size={11} color="#9CA3AF" />
                 <Text className="text-xs text-gray-500">
@@ -308,8 +352,9 @@ const MyPrompt = ({
                 className="flex-1 flex-row items-center justify-center gap-2 py-3.5 rounded-xl border border-gray-200 bg-white"
                 activeOpacity={0.8}
                 onPress={() => {
-                  setSelected(null);
-                  if (selected) onEdit?.(selected);
+                  if (!selected?._id) return;
+
+                  handleUpdatePrompt(Number(selected._id), selected);
                 }}
               >
                 <Edit2 size={15} color="#374151" />
@@ -321,7 +366,9 @@ const MyPrompt = ({
               <TouchableOpacity
                 className="flex-1 flex-row items-center justify-center gap-2 py-3.5 rounded-xl bg-red-50 border border-red-100"
                 activeOpacity={0.8}
-                onPress={() => selected && handleDelete(selected._id)}
+                onPress={() =>
+                  selected && handelDeletePrompt(selected._id)
+                }
               >
                 <Trash2 size={15} color="#DC2626" />
                 <Text className="text-sm font-semibold text-red-600">

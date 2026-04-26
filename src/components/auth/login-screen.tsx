@@ -20,6 +20,7 @@ import { useSendOtpMutation } from "@/src/store/features/otp/otp.features";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import LoadingScreen from "../ui/loading-screen";
+import { setAccessToken } from "@/src/utils/auth/auth.utils";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,8 +55,10 @@ export default function LoginPage() {
     
       await SecureStore.setItemAsync("accessToken", result.accessToken);
       await SecureStore.setItemAsync("refreshToken", result.refreshToken);
+
+      setAccessToken(result.accessToken);
     
-      console.log(result ,'',result?.data?.message);
+      console.log(result);
       
       if (result?.data?.isVerify) {
         router.replace("/explore");
@@ -65,7 +68,7 @@ export default function LoginPage() {
         
         
         
-        router.replace("/verify-otp");
+      router.replace("/verify-otp");
       }
     } catch (error:any) {
       console.log(error , 'error');
