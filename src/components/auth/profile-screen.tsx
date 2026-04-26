@@ -101,7 +101,7 @@ const ProfileScreen = ({
         <View className="flex-row py-5 mt-8 border-gray-100 border-y bg-gray-50/50">
           <View className="items-center flex-1">
             <Text className="text-xl font-bold text-gray-900">
-              {user?.totalPost}
+              {myPromptData?.length}
             </Text>
             <Text className="mt-1 text-xs tracking-widest text-gray-500 uppercase">
               Prompts
