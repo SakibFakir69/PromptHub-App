@@ -32,7 +32,6 @@ import {
   usePromptImageUploadMutation,
 } from "@/src/store/features/prompt/prompt.features";
 
-
 // HANDEL ERROR MESSAGE
 
 const CreatePromptScreen = () => {
@@ -42,8 +41,6 @@ const CreatePromptScreen = () => {
   const [createPrompt, { isLoading }] = useCreatePromptMutation();
   const [promptImageUpload, { isLoading: isLoadinfUploadImage }] =
     usePromptImageUploadMutation();
-
-    
 
   const {
     control,
@@ -81,7 +78,7 @@ const CreatePromptScreen = () => {
   };
 
   // Image Picker Logic
-  const pickImage =useCallback( async () => {
+  const pickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted") {
@@ -107,7 +104,7 @@ const CreatePromptScreen = () => {
     }
 
     setLoadingImage(false);
-  },[]);
+  }, []);
 
   const onSubmit: SubmitHandler<CreatePromptType> = async (data) => {
     try {
@@ -130,21 +127,18 @@ const CreatePromptScreen = () => {
       // Send to your upload function
       const uploadImage = await promptImageUpload(formData).unwrap();
       console.log("Upload response:", uploadImage?.url);
-      
-      const payload:CreatePromptType= {
-        title:data?.title,
-        prompt:data?.prompt,
-        tags:data?.tags,
-        image:uploadImage?.url
-        
-      }
-      console.log(payload , 'payload');
+
+      const payload: CreatePromptType = {
+        title: data?.title,
+        prompt: data?.prompt,
+        tags: data?.tags,
+        image: uploadImage?.url,
+      };
+      console.log(payload, "payload");
 
       const result = await createPrompt(payload).unwrap();
-      console.log(result , 'result');
+      console.log(result, "result");
       reset();
-      
-
     } catch (error: any) {
       console.error("Submission Error:", error);
       Toast.show({
@@ -162,7 +156,6 @@ const CreatePromptScreen = () => {
       <Toast />
       <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
         <TouchableOpacity onPress={() => navigationRouter.backRoute()}>
-          
           <Text className="text-lg text-gray-500">
             {" "}
             {!isLoading && "Cancel"}

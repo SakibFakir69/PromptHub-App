@@ -28,6 +28,7 @@ const ProfileScreen = ({
   console.log(savedPromptData , 'data')
   const myPromptData = promptData?.data || [];
   const savedPrompt = savedPromptData?.data || [];
+  console.log(myPromptData , ' prompt')
   
 
   return (
