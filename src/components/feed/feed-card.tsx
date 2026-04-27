@@ -157,14 +157,14 @@ export const PromptCard: React.FC<PromptCardProps> = ({ item, refetch }) => {
     console.log(item, " prompt id");
 
     try {
-      const result = await savedPrompt(item).unwrap();
+      const result = await savedPrompt({prompt:item}).unwrap();
       console.log(result, "saved prompt");
       
       Toast.show({
         text1: result?.data?.message || result?.message,
       });
     } catch (error) {
-      console.log(error);
+      console.log(error , ' saved prompt');
 
       Toast.show({
         type: "error",
