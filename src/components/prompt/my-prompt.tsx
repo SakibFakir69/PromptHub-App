@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  // *** ADDED: Need Image for preview ***
+  Image,
 } from "react-native";
 import {
   Heart,
@@ -29,6 +31,8 @@ import {
   useUpdatePromptMutation,
 } from "@/src/store/features/prompt/prompt.features";
 import Toast from "react-native-toast-message";
+// *** ADDED: ImagePicker import ***
+import * as ImagePicker from 'expo-image-picker';
 
 const { width } = Dimensions.get("window");
 const CARD_SIZE = Math.floor((width - 4) / 3);
@@ -94,6 +98,7 @@ const MyPrompt = ({
           title: formData.title,
           prompt: formData.prompt,
           tags: formData.tags,
+          // *** formData.image will now be a local file URI (e.g., 'file://...') ***
           image: formData.image,
         },
       }).unwrap();
@@ -106,6 +111,30 @@ const MyPrompt = ({
       handleClose();
     } catch (error) {
       Toast.show({ type: "error", text1: "Error", text2: "Update failed ❌" });
+    }
+  };
+
+  // *** ADDED: Function to handle image picking ***
+  const pickImage = async (onChange: (uri: string) => void) => {
+    // Request permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    // Launch gallery
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // Allows user to crop/rotate
+      aspect: [4, 3],       // Consistent aspect ratio
+      quality: 0.7,        // Moderate compression
+    });
+
+    if (!result.canceled) {
+      // Pass the local URI back to the form
+      onChange(result.assets[0].uri);
     }
   };
 
@@ -208,6 +237,7 @@ const MyPrompt = ({
               </TouchableOpacity>
 
               <ScrollView showsVerticalScrollIndicator={false}>
+                
                 {isEditing ? (
                   <View className="mt-2">
                     <Text className="mb-4 text-lg font-bold text-gray-900">
@@ -264,20 +294,44 @@ const MyPrompt = ({
                       )}
                     />
 
+                    {/* *** SECTION MODIFIED: Replaced TextInput with Image Upload Component *** */}
                     <Text className="mb-1 ml-1 text-xs font-semibold text-gray-500 uppercase">
-                      Image URL
+                      Cover Image
                     </Text>
                     <Controller
                       control={control}
                       name="image"
                       render={({ field: { onChange, value } }) => (
-                        <TextInput
-                          className="p-3 mb-6 border border-gray-200 bg-gray-50 rounded-xl"
-                          value={value}
-                          onChangeText={onChange}
-                        />
+                        <View className="mb-6">
+                          {value ? (
+                            // Show Image Preview with Remove Button
+                            <View className="relative w-full h-40 overflow-hidden border border-gray-200 rounded-xl">
+                              <Image 
+                                source={{ uri: value }} 
+                                className="w-full h-full" 
+                                resizeMode="cover" 
+                              />
+                              <TouchableOpacity 
+                                onPress={() => onChange("")} // Clear image
+                                className="absolute p-1.5 bg-black/50 rounded-full top-2 right-2"
+                              >
+                                <X size={14} color="white" />
+                              </TouchableOpacity>
+                            </View>
+                          ) : (
+                            // Show Upload Button
+                            <TouchableOpacity
+                              onPress={() => pickImage(onChange)}
+                              className="items-center justify-center w-full h-40 border-2 border-gray-200 border-dashed bg-gray-50 rounded-xl"
+                            >
+                              <ImageIcon size={28} color="#9CA3AF" />
+                              <Text className="mt-2 text-sm text-gray-400">Tap to upload image</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       )}
                     />
+                    {/* *** END OF MODIFICATION *** */}
 
                     <View className="flex-row gap-3">
                       <TouchableOpacity
@@ -311,7 +365,7 @@ const MyPrompt = ({
                           {selected?.title}
                         </Text>
                         <Text className="text-sm leading-5 text-gray-500">
-                          {selected?.prompt || selected?.body}
+                          {selected?.prompt || (selected as any)?.body}
                         </Text>
                       </View>
                     </View>
