@@ -3,7 +3,16 @@ import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDeletePromptMutation } from '@/src/store/features/prompt/prompt.features';
 
-export default function SavedPrompt({ prompt, isLoading }) {
+
+interface SavedPromptProps {
+  prompt: any[];
+  isLoading: boolean;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+}
+
+
+// 
+export default function SavedPrompt({ prompt, isLoading,ListHeaderComponent }:SavedPromptProps) {
   const [deletePrompt, { isLoading: isLoadingDelete }] = useDeletePromptMutation();
 
   const handelDeletePrompt = async (id: string) => {
@@ -131,6 +140,7 @@ export default function SavedPrompt({ prompt, isLoading }) {
           </TouchableOpacity>
         );
       }}
+      ListHeaderComponent={ListHeaderComponent}
     />
   );
 }

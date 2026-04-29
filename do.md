@@ -1,11 +1,5 @@
 
 
-<!-- 1. all prompt (  ) -> fix ( title ,prompt , image -> work on ui -> toast ) 
-
- () -> ( delete , ui , toast ) -->
-
-
-2. saved prompt ( design , delete );
 
 #feed -> mixing searching content 
 #searcing people

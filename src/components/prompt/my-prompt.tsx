@@ -47,16 +47,23 @@ interface Prompt {
   likes?: number;
   isPublic?: boolean;
 }
-
+interface MyPromptProps {
+  data?: Prompt[]; // Based on your error message, it expects an array of Prompts
+  isLoading: boolean;
+  onTogglePublic?: (id: string, isPublic: boolean) => void;
+  // This line below is the fix:
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+}
 const DEFAULT_EMOJIS = ["✍️", "🧠", "💼", "🎨", "📊", "🤖", "📧", "🔍", "🧪"];
+
 
 const MyPrompt = ({
   data = [],
   onTogglePublic,
-}: {
-  data?: Prompt[];
-  onTogglePublic?: (id: string, isPublic: boolean) => void;
-}) => {
+  isLoading,
+  ListHeaderComponent
+  
+}: MyPromptProps) => {
   const [selected, setSelected] = useState<Prompt | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [publicMap, setPublicMap] = useState<Record<string, boolean>>({});
@@ -174,11 +181,15 @@ const MyPrompt = ({
     ]);
   };
 
+
+ 
+
   return (
     <>
       <FlatList
         data={data}
         keyExtractor={(item) => item._id}
+      
         numColumns={3}
         ItemSeparatorComponent={() => <View className="h-0.5 bg-gray-100" />}
         columnWrapperStyle={{ gap: 2 }}
@@ -209,6 +220,8 @@ const MyPrompt = ({
             </Text>
           </TouchableOpacity>
         )}
+        ListHeaderComponent={ListHeaderComponent}
+          ListEmptyComponent={<View className="flex justify-center"><Text className="mt-10 text-center">Empty</Text></View>}
       />
 
       <Modal
