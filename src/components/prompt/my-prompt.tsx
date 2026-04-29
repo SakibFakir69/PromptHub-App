@@ -137,6 +137,7 @@ const MyPrompt = ({
       onChange(result.assets[0].uri);
     }
   };
+  
 
   const handleTogglePublic = (id: string) => {
     const next = !publicMap[id];
@@ -295,7 +296,7 @@ const MyPrompt = ({
                     />
 
                     {/* *** SECTION MODIFIED: Replaced TextInput with Image Upload Component *** */}
-                    <Text className="mb-1 ml-1 text-xs font-semibold text-gray-500 uppercase">
+                    {/* <Text className="mb-1 ml-1 text-xs font-semibold text-gray-500 uppercase">
                       Cover Image
                     </Text>
                     <Controller
@@ -330,7 +331,7 @@ const MyPrompt = ({
                           )}
                         </View>
                       )}
-                    />
+                    /> */}
                     {/* *** END OF MODIFICATION *** */}
 
                     <View className="flex-row gap-3">

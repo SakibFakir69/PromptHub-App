@@ -1,12 +1,37 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-// Using Ionicons and MaterialIcons from the Expo library
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useDeletePromptMutation } from '@/src/store/features/prompt/prompt.features';
 
 export default function SavedPrompt({ prompt, isLoading }) {
-  console.log(prompt ,'prompt')
-  
-  // 1. Loading State
+  const [deletePrompt, { isLoading: isLoadingDelete }] = useDeletePromptMutation();
+
+  const handelDeletePrompt = async (id: string) => {
+    // 1. Ask for Confirmation
+    Alert.alert(
+      "Remove Saved Prompt",
+      "Are you sure you want to remove this from your library?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Remove", 
+          style: "destructive", 
+          onPress: async () => {
+            try {
+              // 2. Smooth Delete Operation
+              const result = await deletePrompt({ promptId: id }).unwrap();
+              // 3. Optional: Success Feedback (usually handled by RTK Query cache updates)
+              console.log("Deleted successfully", result);
+            } catch (error) {
+              console.log(error);
+              Alert.alert("Error", "Failed to remove the prompt. Please try again.");
+            }
+          } 
+        }
+      ]
+    );
+  };
+
   if (isLoading) {
     return (
       <View className="items-center justify-center flex-1 bg-white">
@@ -16,7 +41,6 @@ export default function SavedPrompt({ prompt, isLoading }) {
     );
   }
 
-  // 2. Empty State
   if (!prompt || prompt.length === 0) {
     return (
       <View className="items-center justify-center flex-1 px-10 bg-white">
@@ -31,7 +55,6 @@ export default function SavedPrompt({ prompt, isLoading }) {
     );
   }
 
-  // 3. Content State
   return (
     <FlatList
       data={prompt}
@@ -39,8 +62,11 @@ export default function SavedPrompt({ prompt, isLoading }) {
       contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => {
-        const data = item.promptId; 
+        const data = item.promptId;
         
+        // Handle case where prompt might have been deleted from global DB
+        if (!data) return null;
+
         return (
           <TouchableOpacity 
             activeOpacity={0.8}
@@ -57,8 +83,18 @@ export default function SavedPrompt({ prompt, isLoading }) {
                   </View>
                 ))}
               </View>
-              <TouchableOpacity>
-                 <Ionicons name="ellipsis-horizontal" size={20} color="#94a3b8" />
+              
+              {/* DELETE TRIGGER (The ellipsis menu) */}
+              <TouchableOpacity 
+                disabled={isLoadingDelete}
+                onPress={() => handelDeletePrompt(data._id)}
+                className="p-1"
+              >
+                 {isLoadingDelete ? (
+                   <ActivityIndicator size="small" color="#ef4444" />
+                 ) : (
+                   <Ionicons name="trash-outline" size={20} color="#ef4444" />
+                 )}
               </TouchableOpacity>
             </View>
 
@@ -82,7 +118,7 @@ export default function SavedPrompt({ prompt, isLoading }) {
                   <View className="flex-row items-center">
                     <MaterialCommunityIcons name="clock-outline" size={16} color="#94a3b8" />
                     <Text className="ml-1 text-[11px] text-gray-400">
-                      2d ago
+                      Saved
                     </Text>
                   </View>
                </View>

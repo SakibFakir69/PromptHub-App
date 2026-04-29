@@ -24,11 +24,13 @@ const ProfileScreen = ({
 }) => {
   const [activeTab, setActiveTab] = useState("my");
   const { data: promptData } = useGetMyPromptQuery(null);
+  
   const {data:savedPromptData, isLoading:isSavedPromptLoading} = useGetSavedPromptQuery(null);
   console.log(savedPromptData , 'data')
   const myPromptData = promptData?.data || [];
+  
   const savedPrompt = savedPromptData?.data || [];
-  console.log(myPromptData , ' prompt')
+  console.log(savedPrompt , ' saved')
   
 
   return (

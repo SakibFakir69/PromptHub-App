@@ -46,7 +46,7 @@ export const promptApi = baseApi.injectEndpoints({
     }),
     savedPrompt: builder.mutation({
       query: (data) => ({
-        url: "/prompt/saved-prompt",
+        url: "/prompt/save-prompt",
         method: "POST",
         body: data,
       }),
@@ -55,10 +55,20 @@ export const promptApi = baseApi.injectEndpoints({
 
     getSavedPrompt: builder.query({
       query: () => ({
-        url: "/prompt/saved-prompt",
+        url: "/prompt/save-prompt",
         method: "GET",
       }),
       providesTags: ["Prompt"],
+    }),
+
+    deleteSavedPrompt:builder.mutation({
+      query:(data)=>({
+        url:'/prompt/save-prompt',
+        method:"DELETE",
+        body:data
+
+      }),
+      invalidatesTags:['Prompt']
     }),
 
     deletePrompt: builder.mutation({
