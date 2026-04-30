@@ -30,7 +30,7 @@ const ProfileHeader = ({ user, activeTab, setActiveTab, promptCount }: ProfileHe
             </View>
           )}
         </View>
-        <Text>Show</Text>
+      
 
         <Text className="mt-4 text-2xl font-extrabold text-center text-gray-900">
           {user?.name}

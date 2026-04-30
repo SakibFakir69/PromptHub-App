@@ -101,9 +101,9 @@ export default function TabLayout() {
 
       {/* Saved */}
       <Tabs.Screen
-        name="saved"
+        name="discover"
         options={{
-          title: "Saved",
+          title: "Discover",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bookmark-outline" size={size} color={color} />
           ),
