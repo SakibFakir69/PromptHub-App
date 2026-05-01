@@ -24,12 +24,14 @@ export default function DiscoverHome() {
 
 
   const handleSearchName = useCallback((name: string) => {
+    console.log(name);
 
     setSearchByName(name);
     setCursor("");
   }, []);
 
   const handleSearchGender = useCallback((gender: string) => {
+    console.log(gender);
     setSearchByGender(gender);
     setCursor("");
   }, []);
@@ -39,6 +41,8 @@ export default function DiscoverHome() {
   }, []);
 
   const handleLoadMore = useCallback(() => {
+    console.log("hit load more");
+    console.log(data?.nextCursor)
 
     if (!isFetching && data?.nextCursor) {
       setCursor(data.nextCursor);

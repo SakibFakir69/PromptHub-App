@@ -10,8 +10,8 @@ interface IDiscoverFilterPeople {
 
 const GENDERS = [
   { label: 'All', value: '' },
-  { label: 'Male', value: 'male' },
-  { label: 'Female', value: 'female' },
+  { label: 'Male', value: 'MALE' },
+  { label: 'Female', value: 'FEMALE' },
 ];
 
 // Brand Colors mapping

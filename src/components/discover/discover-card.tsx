@@ -14,7 +14,7 @@ interface UserProps {
 // FlatList renderItem provides the item wrapped in an object: { item: UserProps }
 export default function DiscoverCard({ item }: { item: UserProps }) {
 
-    console.log(item);
+    // console.log(item);
     
   return (
     <TouchableOpacity 
@@ -55,9 +55,9 @@ export default function DiscoverCard({ item }: { item: UserProps }) {
       </View>
 
       {/* Action Button */}
-      <TouchableOpacity className="px-4 py-2 bg-black rounded-lg">
+      {/* <TouchableOpacity className="px-4 py-2 bg-black rounded-lg">
         <Text className="text-xs font-semibold text-white">Follow</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </TouchableOpacity>
   );
 }

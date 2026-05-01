@@ -14,6 +14,7 @@ interface IDiscoverPeople {
 }
 
 
+// ADD FOLLOW OPTIONS
 
 export default function DiscoverPeople({ data, isLoading, onSearch, onGender, onLimit, handleLoadMore }: IDiscoverPeople) {
 
