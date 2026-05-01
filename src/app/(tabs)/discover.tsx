@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import React, { useState, useCallback, useMemo } from "react";
 import { useGetDiscoverQuery } from "@/src/store/features/discover/discover.features";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,6 +10,7 @@ export default function DiscoverHome() {
   const [searchByName, setSearchByName] = useState("");
   const [searchByGender, setSearchByGender] = useState("");
   const [limit, setLimit] = useState(10);
+  const { height, width } = useWindowDimensions();
 
   // RTK Query hook
   const { data, isLoading, isFetching } = useGetDiscoverQuery({
@@ -21,16 +22,16 @@ export default function DiscoverHome() {
 
   const discoverData = useMemo(() => data?.data || [], [data?.data]);
 
-  
+
   const handleSearchName = useCallback((name: string) => {
-    
+
     setSearchByName(name);
-    setCursor(""); 
+    setCursor("");
   }, []);
 
   const handleSearchGender = useCallback((gender: string) => {
     setSearchByGender(gender);
-    setCursor(""); 
+    setCursor("");
   }, []);
 
   const handleLimit = useCallback((newLimit: number) => {
@@ -38,14 +39,14 @@ export default function DiscoverHome() {
   }, []);
 
   const handleLoadMore = useCallback(() => {
-   
+
     if (!isFetching && data?.nextCursor) {
       setCursor(data.nextCursor);
     }
   }, [isFetching, data?.nextCursor]);
 
   return (
-    <SafeAreaView style={styles.container} className="">
+    <SafeAreaView className="flex-1" edges={['top', 'left', 'right']}>
       <DiscoverPeople
         data={discoverData}
         isLoading={isLoading || isFetching}
@@ -57,10 +58,3 @@ export default function DiscoverHome() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "red",
-  },
-});
